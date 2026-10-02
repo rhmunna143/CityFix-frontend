@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 import { User, Role } from "@/types/api";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -45,9 +51,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const getRoleHome = (r: string) => {
-    if (r === 'ADMIN' || r === 'SUPER_ADMIN') return '/admin';
-    if (r === 'STAFF') return '/staff';
-    return '/dashboard';
+    if (r === "ADMIN" || r === "SUPER_ADMIN") return "/admin";
+    if (r === "STAFF") return "/staff";
+    return "/dashboard";
   };
 
   const demoLogin = async (selectedRole: Role) => {
@@ -92,7 +98,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, isLoading, login, demoLogin, logout }}>
+    <AuthContext.Provider
+      value={{ user, role, isLoading, login, demoLogin, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
