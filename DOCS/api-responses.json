@@ -1,0 +1,164 @@
+{
+  "POST /auth/login (admin)": {
+    "success": false,
+    "message": "Failed to connect to upstream database. Please contact Prisma support if the problem persists.",
+    "errors": [
+      {
+        "message": "Failed to connect to upstream database. Please contact Prisma support if the problem persists."
+      }
+    ]
+  },
+  "POST /auth/login (citizen)": {
+    "success": true,
+    "message": "User logged in successfully",
+    "data": {
+      "user": {
+        "id": "c6ccd121-1f0f-4719-a140-6c37d389b8b4",
+        "name": "Jane Citizen",
+        "email": "citizen@cityfix.local",
+        "googleId": null,
+        "role": "CITIZEN",
+        "phone": null,
+        "avatarUrl": null,
+        "isActive": true,
+        "isSuperAdmin": false,
+        "createdAt": "2026-09-02T12:56:11.534Z",
+        "updatedAt": "2026-09-02T12:56:11.534Z",
+        "deletedAt": null
+      },
+      "tokens": {
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjNmNjZDEyMS0xZjBmLTQ3MTktYTE0MC02YzM3ZDM4OWI4YjQiLCJyb2xlIjoiQ0lUSVpFTiIsImVtYWlsIjoiY2l0aXplbkBjaXR5Zml4LmxvY2FsIiwiaWF0IjoxNzkwOTE2OTU4LCJleHAiOjE3OTEzNDg5NTh9.Nhw5FPxHvOLyM1WhRFpKkBtokFSr4eGS8TN7ZpGAAbE",
+        "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjNmNjZDEyMS0xZjBmLTQ3MTktYTE0MC02YzM3ZDM4OWI4YjQiLCJyb2xlIjoiQ0lUSVpFTiIsImVtYWlsIjoiY2l0aXplbkBjaXR5Zml4LmxvY2FsIiwiaWF0IjoxNzkwOTE2OTU4LCJleHAiOjE3OTYxMDA5NTh9.H8bnAFms62SMUYy6j84jsV1M_KyVLHi_cwLhRU8bNm0"
+      }
+    }
+  },
+  "GET /complaints": {
+    "success": true,
+    "message": "Complaints retrieved successfully",
+    "data": [
+      {
+        "id": "45c27de3-2275-4a36-9e2b-790e97d9ae6e",
+        "referenceCode": "CMP-2026-00005",
+        "citizenId": "c6ccd121-1f0f-4719-a140-6c37d389b8b4",
+        "categoryId": "3930ba94-ccfd-4e68-9774-10b9a86032a9",
+        "departmentId": "c74a6a7f-a114-40ba-bfbd-e4aa118c5b64",
+        "title": "Mirpur bustand to Vanga-bottola drain cleaning need. 233",
+        "description": "Here about 2 km of drain need cleaning. The drain is blocked by dust.",
+        "latitude": 1226332,
+        "longitude": 1236576,
+        "address": "Mirpur bustand, Kushtia to Meherpur Hwy.",
+        "status": "SUBMITTED",
+        "isPriority": false,
+        "slaDeadline": "2026-09-07T10:06:48.215Z",
+        "isSlaBreached": false,
+        "resolutionNote": null,
+        "reopenCount": 0,
+        "createdAt": "2026-09-06T10:06:48.219Z",
+        "updatedAt": "2026-09-06T10:06:48.219Z",
+        "deletedAt": null,
+        "category": {
+          "id": "3930ba94-ccfd-4e68-9774-10b9a86032a9",
+          "name": "Road side drain cleaning"
+        },
+        "department": {
+          "id": "c74a6a7f-a114-40ba-bfbd-e4aa118c5b64",
+          "name": "Sanitation"
+        }
+      },
+      {
+        "id": "9e07a8c1-306b-43d8-8106-84387826efa0",
+        "referenceCode": "CMP-2026-00004",
+        "citizenId": "c6ccd121-1f0f-4719-a140-6c37d389b8b4",
+        "categoryId": "3930ba94-ccfd-4e68-9774-10b9a86032a9",
+        "departmentId": "c74a6a7f-a114-40ba-bfbd-e4aa118c5b64",
+        "title": "Mirpur bustand to Vanga-bottola drain cleaning need. 23",
+        "description": "Here about 2 km of drain need cleaning. The drain is blocked by dust.",
+        "latitude": 1226332,
+        "longitude": 1236576,
+        "address": "Mirpur bustand, Kushtia to Meherpur Hwy.",
+        "status": "SUBMITTED",
+        "isPriority": true,
+        "slaDeadline": "2026-09-07T10:04:59.424Z",
+        "isSlaBreached": false,
+        "resolutionNote": null,
+        "reopenCount": 0,
+        "createdAt": "2026-09-06T10:04:59.424Z",
+        "updatedAt": "2026-09-06T10:04:59.424Z",
+        "deletedAt": null,
+        "category": {
+          "id": "3930ba94-ccfd-4e68-9774-10b9a86032a9",
+          "name": "Road side drain cleaning"
+        },
+        "department": {
+          "id": "c74a6a7f-a114-40ba-bfbd-e4aa118c5b64",
+          "name": "Sanitation"
+        }
+      },
+      {
+        "id": "4897829c-a00a-4a63-b0c8-88b927625412",
+        "referenceCode": "CMP-2026-00002",
+        "citizenId": "c6ccd121-1f0f-4719-a140-6c37d389b8b4",
+        "categoryId": "cea26403-ced0-4864-bf16-17c5e86d8ae0",
+        "departmentId": "ce868310-f80d-4538-8f61-d3724e683301",
+        "title": "Pothole",
+        "description": "Big pothole",
+        "latitude": 12.3,
+        "longitude": 45.6,
+        "address": "Main st",
+        "status": "SUBMITTED",
+        "isPriority": false,
+        "slaDeadline": "2026-09-08T08:25:58.520Z",
+        "isSlaBreached": false,
+        "resolutionNote": null,
+        "reopenCount": 0,
+        "createdAt": "2026-09-06T08:25:58.530Z",
+        "updatedAt": "2026-09-06T08:25:58.530Z",
+        "deletedAt": null,
+        "category": {
+          "id": "cea26403-ced0-4864-bf16-17c5e86d8ae0",
+          "name": "Pothole"
+        },
+        "department": {
+          "id": "ce868310-f80d-4538-8f61-d3724e683301",
+          "name": "Roads & Infrastructure"
+        }
+      }
+    ],
+    "meta": {
+      "page": 1,
+      "limit": 10,
+      "total": 3,
+      "totalPages": 1
+    }
+  },
+  "GET /admin/dashboard-stats": {
+    "success": false,
+    "message": "You do not have permission to perform this action.",
+    "errors": [
+      {
+        "message": "You do not have permission to perform this action."
+      }
+    ]
+  },
+  "POST /payments/initiate": {
+    "success": true,
+    "message": "Payment session initiated",
+    "data": {
+      "payment": {
+        "id": "d2ab0b93-b588-43b5-84db-f37f224531cb",
+        "userId": "c6ccd121-1f0f-4719-a140-6c37d389b8b4",
+        "complaintId": "45c27de3-2275-4a36-9e2b-790e97d9ae6e",
+        "purpose": "PRIORITY_FEE",
+        "amount": "10",
+        "currency": "usd",
+        "stripeSessionId": "cs_test_a18KUmZyu88ZMWxQ0zIrOdG8QMAmNZv3twf130s4tk0EYwFZx771KfTor9",
+        "stripePaymentIntentId": null,
+        "status": "PENDING",
+        "paidAt": null,
+        "createdAt": "2026-10-02T04:56:05.342Z",
+        "updatedAt": "2026-10-02T04:56:05.342Z"
+      },
+      "sessionUrl": "https://checkout.stripe.com/c/pay/cs_test_a18KUmZyu88ZMWxQ0zIrOdG8QMAmNZv3twf130s4tk0EYwFZx771KfTor9#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdicyc%2FNSknZHVsTmB8Jz8ndW5acWB2cVowNEpNdTNOQlJOfGozcV1NXEpzMEhNcWliZzZ0Z3xQSmZ8V1NQcjxRdHVrTm9ra0Bzc2hHTzIzPVN%2FUU9uUE5hcnR2MWp%2FVjFGaWJjfUNkQ0F8Mn90aXJKMjU1X0FiZ2NRTDMnKSdjd2poVmB3c2B3Jz9xd3BgKSdnZGZuYndqcGthRmppancnPycmY2NjY2NjJyknaWR8anBxUXx1YCc%2FJ3Zsa2JpYFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl"
+    }
+  }
+}
