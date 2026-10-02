@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { DashboardShell } from "@/components/shared/DashboardShell";
 import { BarChart3, Users, Building, Tag, Shield, Inbox } from "lucide-react";
 
@@ -12,5 +12,11 @@ const navItems = [
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  return <DashboardShell navItems={navItems}>{children}</DashboardShell>;
+  return (
+    <DashboardShell navItems={navItems}>
+      <Suspense fallback={<div className="p-8 text-center text-muted-foreground">Loading...</div>}>
+        {children}
+      </Suspense>
+    </DashboardShell>
+  );
 }
