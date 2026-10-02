@@ -1,1 +1,104 @@
-export default function loginPage() { return <div className="p-8">app/(auth)/login/page.tsx</div>; }
+"use client";
+
+import { useState } from "react";
+import { useAuth } from "@/lib/auth/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import { Role } from "@/types/api";
+
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState<string | null>(null);
+  const { login, demoLogin } = useAuth();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      await login({ email, password });
+      toast.success("Logged in successfully");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDemo = async (role: Role) => {
+    setDemoLoading(role);
+    try {
+      await demoLogin(role);
+      toast.success(`Logged in as Demo ${role}`);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setDemoLoading(null);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-muted/20 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-2xl font-bold tracking-tight text-primary">CityFix</CardTitle>
+          <CardDescription>Enter your email and password to log in</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link href="/forgot-password" className="text-xs text-primary hover:underline">Forgot password?</Link>
+              </div>
+              <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Log In
+            </Button>
+          </form>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">Or one-click demo login</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Button variant="outline" onClick={() => handleDemo("CITIZEN")} disabled={demoLoading !== null}>
+              {demoLoading === "CITIZEN" && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Demo Citizen
+            </Button>
+            <Button variant="outline" onClick={() => handleDemo("STAFF")} disabled={demoLoading !== null}>
+              {demoLoading === "STAFF" && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Demo Staff
+            </Button>
+            <Button variant="outline" onClick={() => handleDemo("ADMIN")} disabled={demoLoading !== null}>
+              {demoLoading === "ADMIN" && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Demo Admin
+            </Button>
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col space-y-4 text-center text-sm text-muted-foreground mt-2">
+          <div>
+            Don&apos;t have an account? <Link href="/register" className="text-primary hover:underline">Register</Link>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+}
