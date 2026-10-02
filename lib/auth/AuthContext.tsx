@@ -44,6 +44,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getRoleHome = (r: string) => {
+    if (r === 'ADMIN' || r === 'SUPER_ADMIN') return '/admin';
+    if (r === 'STAFF') return '/staff';
+    return '/dashboard';
+  };
+
   const demoLogin = async (selectedRole: Role) => {
     const res = await fetch("/api/auth/demo", {
       method: "POST",
@@ -55,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await fetchUser();
       const searchParams = new URLSearchParams(window.location.search);
       const next = searchParams.get("next");
-      router.push(next || "/");
+      router.push(next || getRoleHome(data.data.user.role));
     } else {
       throw new Error(data.message || "Demo login failed");
     }
@@ -72,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await fetchUser();
       const searchParams = new URLSearchParams(window.location.search);
       const next = searchParams.get("next");
-      router.push(next || "/");
+      router.push(next || getRoleHome(data.data.user.role));
     } else {
       throw new Error(data.message || "Login failed");
     }

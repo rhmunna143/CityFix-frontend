@@ -1,5 +1,10 @@
+"use client";
+
 import { ReactNode } from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth/AuthContext';
+import { Button } from '@/components/ui/button';
+import { LogOut } from 'lucide-react';
 
 interface NavItem {
   title: string;
@@ -13,6 +18,8 @@ interface DashboardShellProps {
 }
 
 export function DashboardShell({ children, navItems }: DashboardShellProps) {
+  const { user, logout } = useAuth();
+
   return (
     <div className="flex min-h-screen bg-muted/40 w-full">
       <aside className="hidden md:flex w-64 flex-col bg-background border-r p-4">
@@ -34,7 +41,11 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
         <header className="h-14 lg:h-16 flex items-center gap-4 border-b bg-background px-4 md:px-8">
           {/* Mobile menu could go here */}
           <div className="ml-auto flex items-center gap-4">
-            <span className="text-sm font-medium">User</span>
+            <span className="text-sm font-medium">{user?.name || 'User'}</span>
+            <Button variant="ghost" size="sm" onClick={() => logout()}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
           </div>
         </header>
         <main className="flex-1 p-4 md:p-8 overflow-auto">
