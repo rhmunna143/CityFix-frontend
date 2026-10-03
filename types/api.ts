@@ -83,6 +83,7 @@ export interface Complaint {
   category?: {
     id: string;
     name: string;
+    basePrice?: string;
   };
   department?: {
     id: string;
