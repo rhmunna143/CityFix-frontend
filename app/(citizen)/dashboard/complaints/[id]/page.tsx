@@ -108,7 +108,14 @@ export default function ComplaintDetail() {
             <CardContent className="space-y-4">
               <div>
                 <span className="text-sm text-muted-foreground block mb-1">Current Status</span>
-                <Badge variant={complaint.status === "RESOLVED" || complaint.status === "CLOSED" ? "default" : "secondary"}>{complaint.status}</Badge>
+                <div className="flex gap-2 items-center">
+                  <Badge variant={complaint.status === "RESOLVED" || complaint.status === "CLOSED" ? "default" : "secondary"}>{complaint.status}</Badge>
+                  {complaint.isPriority && (
+                    <Badge variant="default" className="bg-amber-500 hover:bg-amber-600 text-white">
+                      <Zap className="h-3 w-3 mr-1" /> Priority
+                    </Badge>
+                  )}
+                </div>
               </div>
               <div>
                 <span className="text-sm text-muted-foreground block mb-1">Category</span>
@@ -124,6 +131,15 @@ export default function ComplaintDetail() {
                   {format(new Date(complaint.slaDeadline), "PPp")}
                 </span>
               </div>
+              {complaint.isPriority && (
+                <div className="mt-4 p-3 bg-amber-50 text-amber-900 border border-amber-200 rounded-md flex items-start gap-2">
+                  <Zap className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                  <div className="text-sm">
+                    <p className="font-semibold">Priority Confirmed</p>
+                    <p className="text-amber-700 mt-1">This complaint has been upgraded. The SLA deadline is accelerated.</p>
+                  </div>
+                </div>
+              )}
             </CardContent>
             {(complaint.status !== "CLOSED" && complaint.status !== "RESOLVED") && (
               <CardFooter className="flex flex-col gap-2 border-t pt-4">

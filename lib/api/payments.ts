@@ -24,6 +24,16 @@ export async function getPayment(id: string): Promise<Payment> {
   return data.data;
 }
 
+export async function getPaymentBySession(sessionId: string): Promise<Payment> {
+  const res = await fetch(`/api/proxy/payments/by-session/${sessionId}`);
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.message || "Failed to fetch payment by session");
+  }
+  const data: ApiResponse<Payment> = await res.json();
+  return data.data;
+}
+
 export async function getPaymentHistory(params?: Record<string, string>): Promise<Paginated<Payment>> {
   const searchParams = new URLSearchParams(params || {});
   const res = await fetch(`/api/proxy/payments/my-history?${searchParams.toString()}`);

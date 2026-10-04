@@ -1,45 +1,55 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getPayment } from "@/lib/api/payments";
+import { getPayment, getPaymentBySession } from "@/lib/api/payments";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { CheckCircle, Loader2, AlertTriangle } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Payment } from "@/types/api";
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessContent() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [pollTimeout, setPollTimeout] = useState(false);
 
   useEffect(() => {
-    const pid = sessionStorage.getItem("pendingPaymentId");
-    if (pid) {
-      setPaymentId(pid);
-      // Timeout polling after 30 seconds
-      const timeout = setTimeout(() => {
-        setPollTimeout(true);
-      }, 30000);
-      return () => clearTimeout(timeout);
-    } else {
-      setPollTimeout(true); // If no ID, skip right to generic state
+    // We prioritize session_id from URL if present. If not, fallback to sessionStorage.
+    if (!sessionId) {
+      const pid = sessionStorage.getItem("pendingPaymentId");
+      if (pid) {
+        setPaymentId(pid);
+      } else {
+        setPollTimeout(true); // If no ID and no session_id, skip to generic state
+      }
     }
-  }, []);
+
+    const timeout = setTimeout(() => {
+      setPollTimeout(true);
+    }, 30000);
+    return () => clearTimeout(timeout);
+  }, [sessionId]);
 
   const { data: payment, error } = useQuery({
-    queryKey: ["payment", paymentId],
-    queryFn: () => getPayment(paymentId!),
-    enabled: !!paymentId && !pollTimeout,
+    queryKey: ["payment", sessionId || paymentId],
+    queryFn: () => {
+      if (sessionId) return getPaymentBySession(sessionId);
+      return getPayment(paymentId!);
+    },
+    enabled: !!(sessionId || paymentId),
     refetchInterval: (query) => {
       const data = query.state.data as Payment | undefined;
-      return (data?.status === "PENDING" && !pollTimeout) ? 2000 : false;
+      if (!data) return !pollTimeout ? 2000 : false;
+      return (data.status === "PENDING" && !pollTimeout) ? 2000 : false;
     },
   });
 
-  const isSuccess = payment?.status === "SUCCESS";
-  const isPending = (payment?.status === "PENDING" && !pollTimeout) || (!payment && !pollTimeout);
-  const isFailed = payment?.status === "FAILED" || payment?.status === "CANCELLED";
+  const isSuccess = payment?.status === "SUCCEEDED";
+  const isFailed = payment?.status === "FAILED" || payment?.status === "REFUNDED" || !!error;
+  const isPending = !isSuccess && !isFailed && !pollTimeout;
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4 bg-muted/40">
@@ -76,7 +86,7 @@ export default function PaymentSuccessPage() {
           </CardHeader>
         ) : (
           <CardHeader>
-             <div className="flex justify-center mb-4 text-amber-500">
+            <div className="flex justify-center mb-4 text-amber-500">
               <AlertTriangle className="h-16 w-16" />
             </div>
             <CardTitle className="text-2xl">Payment Processing</CardTitle>
@@ -95,5 +105,13 @@ export default function PaymentSuccessPage() {
         </CardFooter>
       </Card>
     </div>
+  );
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+      <PaymentSuccessContent />
+    </Suspense>
   );
 }
