@@ -79,8 +79,27 @@ export default function ComplaintDetail() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p>{complaint.description}</p>
+              
+              {complaint.attachments && complaint.attachments.length > 0 && (
+                <div className="pt-4 border-t space-y-2">
+                  <h4 className="font-semibold text-sm mb-2">Attachments</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {complaint.attachments.map((attachment) => (
+                      <div key={attachment.id} className="relative aspect-square rounded-md overflow-hidden border">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img 
+                          src={attachment.url} 
+                          alt="Complaint attachment" 
+                          className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="pt-4 border-t">
-                <h4 className="font-semibold mb-2">Location</h4>
+                <h4 className="font-semibold text-sm mb-2">Location</h4>
                 <p className="text-muted-foreground">{complaint.address}</p>
               </div>
             </CardContent>
@@ -141,17 +160,26 @@ export default function ComplaintDetail() {
                 </div>
               )}
             </CardContent>
-            {(complaint.status !== "CLOSED" && complaint.status !== "RESOLVED") && (
+            {(complaint.status !== "CLOSED" && complaint.status !== "RESOLVED") && (() => {
+              const hasPaidServiceCharge = complaint.payments?.some(p => p.purpose === "SERVICE_CHARGE" && p.status === "SUCCEEDED");
+              return (
               <CardFooter className="flex flex-col gap-2 border-t pt-4">
                 {complaint.category?.basePrice && complaint.status === "SUBMITTED" && (
-                  <Button 
-                    className="w-full" 
-                    onClick={() => handlePayment("SERVICE_CHARGE")}
-                    disabled={paymentLoading !== null}
-                  >
-                    {paymentLoading === "SERVICE_CHARGE" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CreditCard className="mr-2 h-4 w-4" />}
-                    Pay Service Charge (${parseFloat(complaint.category.basePrice).toFixed(2)})
-                  </Button>
+                  hasPaidServiceCharge ? (
+                    <div className="w-full p-3 bg-green-50 text-green-900 border border-green-200 rounded-md flex items-center justify-center gap-2 text-sm font-medium">
+                      <CreditCard className="h-4 w-4 text-green-600" />
+                      Service Charge Paid
+                    </div>
+                  ) : (
+                    <Button 
+                      className="w-full" 
+                      onClick={() => handlePayment("SERVICE_CHARGE")}
+                      disabled={paymentLoading !== null}
+                    >
+                      {paymentLoading === "SERVICE_CHARGE" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CreditCard className="mr-2 h-4 w-4" />}
+                      Pay Service Charge (${parseFloat(complaint.category.basePrice).toFixed(2)})
+                    </Button>
+                  )
                 )}
                 {!complaint.isPriority && (
                   <Button 
@@ -165,7 +193,8 @@ export default function ComplaintDetail() {
                   </Button>
                 )}
               </CardFooter>
-            )}
+              )
+            })()}
           </Card>
 
           {complaint.status === "RESOLVED" && complaint.reopenCount < 1 && (

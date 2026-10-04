@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchCategories, createCategory, updateCategory, deleteCategory, fetchDepartments } from "@/lib/api/admin";
+import { fetchCategories, createCategory, updateCategory, deleteCategory, restoreCategory, fetchDepartments } from "@/lib/api/admin";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Edit, Trash2, Loader2 } from "lucide-react";
+import { Plus, Edit, Trash2, Loader2, RefreshCcw } from "lucide-react";
 import { toast } from "sonner";
 import { Category, Department } from "@/types/api";
 
@@ -19,6 +19,7 @@ export default function CategoriesPage() {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [statusFilter, setStatusFilter] = useState<'active' | 'deleted' | 'all'>('active');
   
   // Form State
   const [name, setName] = useState("");
@@ -28,13 +29,13 @@ export default function CategoriesPage() {
   const [basePrice, setBasePrice] = useState("");
 
   const { data: categories, isLoading } = useQuery({
-    queryKey: ["categories"],
-    queryFn: fetchCategories,
+    queryKey: ["categories", statusFilter],
+    queryFn: () => fetchCategories(statusFilter),
   });
 
   const { data: departments } = useQuery({
-    queryKey: ["departments"],
-    queryFn: fetchDepartments,
+    queryKey: ["departments", "all"],
+    queryFn: () => fetchDepartments("all"),
   });
 
   const saveMutation = useMutation({
@@ -62,6 +63,15 @@ export default function CategoriesPage() {
     onError: (err: any) => toast.error(err.message || "Failed to delete category"),
   });
 
+  const restoreMutation = useMutation({
+    mutationFn: restoreCategory,
+    onSuccess: () => {
+      toast.success("Category restored");
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+    onError: (err: any) => toast.error(err.message || "Failed to restore category"),
+  });
+
   const resetForm = () => {
     setEditingCategory(null);
     setName("");
@@ -73,7 +83,7 @@ export default function CategoriesPage() {
 
   const openEdit = (category: Category) => {
     setEditingCategory(category);
-    setName(category.name);
+    setName(category.name.replace(/_DELETED_\d+$/, ''));
     setDescription(category.description || "");
     setDepartmentId(category.departmentId || "");
     setSlaHours(category.slaHours ? category.slaHours.toString() : "");
@@ -84,7 +94,11 @@ export default function CategoriesPage() {
   const handleSave = () => {
     if (!name.trim()) return toast.error("Name is required");
     
-    const payload: any = { name, description };
+    const payload: any = { description };
+    if (!editingCategory || name !== editingCategory.name.replace(/_DELETED_\d+$/, '')) {
+      payload.name = name;
+    }
+    
     if (departmentId) payload.departmentId = departmentId;
     if (slaHours) payload.slaHours = parseInt(slaHours);
     if (basePrice) payload.basePrice = parseFloat(basePrice);
@@ -101,6 +115,12 @@ export default function CategoriesPage() {
         </Button>
       </div>
 
+      <div className="flex items-center gap-2">
+        <Button variant={statusFilter === 'active' ? 'secondary' : 'ghost'} size="sm" onClick={() => setStatusFilter('active')}>Active</Button>
+        <Button variant={statusFilter === 'all' ? 'secondary' : 'ghost'} size="sm" onClick={() => setStatusFilter('all')}>All</Button>
+        <Button variant={statusFilter === 'deleted' ? 'secondary' : 'ghost'} size="sm" onClick={() => setStatusFilter('deleted')} className="text-destructive">Trash</Button>
+      </div>
+
       <div className="border rounded-lg bg-card overflow-x-auto">
         <Table>
           <TableHeader>
@@ -109,48 +129,74 @@ export default function CategoriesPage() {
               <TableHead>Department</TableHead>
               <TableHead>SLA (Hours)</TableHead>
               <TableHead>Base Price</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="w-[100px] text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8">
+                <TableCell colSpan={6} className="text-center py-8">
                   <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
                 </TableCell>
               </TableRow>
             ) : !categories || categories.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                  No categories found.
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  No categories found in {statusFilter} view.
                 </TableCell>
               </TableRow>
             ) : (
               categories.map((cat: Category) => {
                 const dept = departments?.find((d: Department) => d.id === cat.departmentId);
+                const isDeleted = cat.deletedAt != null || cat.isActive === false;
+                const displayName = cat.name.replace(/_DELETED_\d+$/, '');
+
                 return (
-                  <TableRow key={cat.id}>
-                    <TableCell className="font-medium">{cat.name}</TableCell>
-                    <TableCell className="text-muted-foreground">{dept?.name || "—"}</TableCell>
+                  <TableRow key={cat.id} className={isDeleted ? "opacity-60 bg-muted/30" : ""}>
+                    <TableCell className="font-medium">
+                      {displayName}
+                      {isDeleted && <span className="ml-2 text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded">Deleted</span>}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">{dept?.name ? dept.name.replace(/_DELETED_\d+$/, '') : "—"}</TableCell>
                     <TableCell>{cat.slaHours || "—"}</TableCell>
                     <TableCell>{cat.basePrice ? `$${parseFloat(cat.basePrice).toFixed(2)}` : "—"}</TableCell>
+                    <TableCell>{isDeleted ? 'Inactive' : 'Active'}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => openEdit(cat)}>
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                          onClick={() => {
-                            if (confirm(`Are you sure you want to delete ${cat.name}?`)) {
-                              deleteMutation.mutate(cat.id);
-                            }
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        {isDeleted ? (
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-primary hover:text-primary hover:bg-primary/10"
+                            title="Restore"
+                            onClick={() => {
+                              if (confirm(`Are you sure you want to restore ${displayName}?`)) {
+                                restoreMutation.mutate(cat.id);
+                              }
+                            }}
+                          >
+                            <RefreshCcw className="h-4 w-4" />
+                          </Button>
+                        ) : (
+                          <>
+                            <Button variant="ghost" size="icon" onClick={() => openEdit(cat)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                              onClick={() => {
+                                if (confirm(`Are you sure you want to delete ${displayName}?`)) {
+                                  deleteMutation.mutate(cat.id);
+                                }
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>

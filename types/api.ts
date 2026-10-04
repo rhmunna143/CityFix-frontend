@@ -89,6 +89,13 @@ export interface Complaint {
     id: string;
     name: string;
   };
+  attachments?: {
+    id: string;
+    url: string;
+    fileType: string;
+    stage: string;
+  }[];
+  payments?: Payment[];
 }
 
 export interface Payment {
