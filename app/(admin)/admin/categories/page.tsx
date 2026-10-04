@@ -93,6 +93,7 @@ export default function CategoriesPage() {
 
   const handleSave = () => {
     if (!name.trim()) return toast.error("Name is required");
+    if (!departmentId || departmentId === "unassigned") return toast.error("Department is required");
     
     const payload: any = { description };
     if (!editingCategory || name !== editingCategory.name.replace(/_DELETED_\d+$/, '')) {
@@ -229,9 +230,8 @@ export default function CategoriesPage() {
                   <SelectValue placeholder="Select a department" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="unassigned" disabled className="hidden">Select a department</SelectItem>
                   {departments?.map((dept: Department) => (
-                    <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
+                    <SelectItem key={dept.id} value={dept.id}>{dept.name.replace(/_DELETED_\d+$/, '')}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
