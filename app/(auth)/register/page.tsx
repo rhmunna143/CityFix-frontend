@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -29,6 +29,14 @@ export default function RegisterPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
   });
+
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/login");
+    }
+  };
 
   const onSubmit = async (data: RegisterForm) => {
     setIsLoading(true);
@@ -54,8 +62,22 @@ export default function RegisterPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-muted/20 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
+      <Card className="w-full max-w-md relative">
+        <div className="absolute left-4 top-4 z-10">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleBack}
+            className="h-8 px-2 gap-1.5 text-muted-foreground hover:text-foreground cursor-pointer rounded-md"
+            title="Go back"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="text-xs font-medium">Back</span>
+          </Button>
+        </div>
+        <CardHeader className="space-y-1 text-center pt-8 sm:pt-6">
           <CardTitle className="text-2xl font-bold tracking-tight text-primary">Create an account</CardTitle>
           <CardDescription>Enter your details to create your CityFix account</CardDescription>
         </CardHeader>

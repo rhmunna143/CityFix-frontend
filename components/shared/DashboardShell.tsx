@@ -76,7 +76,28 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
                 </Button>
               </Link>
             )}
-            <span className="text-sm font-medium hidden sm:inline-block">{user?.name || 'User'}</span>
+            {user && (
+              <Link
+                href={
+                  user.role === 'ADMIN' || user.role === 'SUPER_ADMIN'
+                    ? '/admin/profile'
+                    : user.role === 'STAFF'
+                      ? '/staff/profile'
+                      : '/dashboard/profile'
+                }
+                className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-accent text-foreground transition-colors cursor-pointer"
+                title="View Profile"
+              >
+                <div className="h-7 w-7 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-xs font-semibold text-primary overflow-hidden shrink-0">
+                  {user.avatarUrl ? (
+                    <img src={user.avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+                  ) : (
+                    <span>{user.name?.charAt(0) || 'U'}</span>
+                  )}
+                </div>
+                <span className="text-sm font-medium hidden sm:inline-block">{user.name}</span>
+              </Link>
+            )}
             <Button variant="ghost" size="sm" onClick={() => logout()} className="cursor-pointer">
               <LogOut className="h-4 w-4 mr-2 hidden sm:inline-block" />
               <span className="hidden sm:inline-block">Logout</span>

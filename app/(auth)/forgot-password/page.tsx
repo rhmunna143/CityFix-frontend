@@ -173,6 +173,17 @@ export default function ForgotPasswordPage() {
             <span>&rarr;</span>
             <span className={`px-2 py-0.5 rounded-full ${step === 'NEW_PASSWORD' || step === 'SUCCESS' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>3. Reset</span>
           </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push("/login")}
+            className="h-7 px-2 gap-1 text-muted-foreground hover:text-foreground cursor-pointer rounded-md text-xs"
+            title="Back to login"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>Back</span>
+          </Button>
         </div>
 
         {/* STEP 1: EMAIL */}

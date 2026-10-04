@@ -90,7 +90,7 @@ export function ProfileForm() {
           <Button 
             onClick={handleSave} 
             disabled={profileMutation.isPending || (name === user.name && phone === (user.phone || ""))}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto cursor-pointer"
           >
             {profileMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save Changes

@@ -7,18 +7,28 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Role } from "@/types/api";
 
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [demoLoading, setDemoLoading] = useState<string | null>(null);
   const { login, demoLogin } = useAuth();
+
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,8 +57,22 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-muted/20 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
+      <Card className="w-full max-w-md relative">
+        <div className="absolute left-4 top-4 z-10">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleBack}
+            className="h-8 px-2 gap-1.5 text-muted-foreground hover:text-foreground cursor-pointer rounded-md"
+            title="Go back"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="text-xs font-medium">Back</span>
+          </Button>
+        </div>
+        <CardHeader className="space-y-1 text-center pt-8 sm:pt-6">
           <CardTitle className="text-2xl font-bold tracking-tight text-primary">CityFix</CardTitle>
           <CardDescription>Enter your email and password to log in</CardDescription>
         </CardHeader>
