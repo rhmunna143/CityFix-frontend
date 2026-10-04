@@ -1,7 +1,7 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { fetchComplaints, fetchCitizenStats } from "@/lib/api/complaints";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchComplaints, fetchCitizenStats, deleteComplaint } from "@/lib/api/complaints";
 import { DataTable } from "@/components/shared/DataTable";
 import { Pagination } from "@/components/shared/Pagination";
 import { SelectFilter } from "@/components/shared/SelectFilter";
@@ -10,12 +10,14 @@ import { useUrlState } from "@/hooks/useUrlState";
 import { Complaint } from "@/types/api";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
-import { PlusCircle, Eye, FileText, Clock, CheckCircle, TrendingUp, BarChart3 } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { PlusCircle, Eye, Trash2, FileText, Clock, CheckCircle, TrendingUp, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 export default function DashboardPage() {
+  const queryClient = useQueryClient();
   const { searchParams, updateUrl, get, getPage } = useUrlState();
   const page = getPage();
   const status = get("status");
@@ -29,6 +31,16 @@ export default function DashboardPage() {
   const { data: stats } = useQuery({
     queryKey: ["citizen-stats"],
     queryFn: () => fetchCitizenStats(),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteComplaint(id),
+    onSuccess: () => {
+      toast.success("Complaint deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      queryClient.invalidateQueries({ queryKey: ["citizen-stats"] });
+    },
+    onError: (err: any) => toast.error(err.message || "Failed to delete complaint"),
   });
 
   // Derived or fetched counts
@@ -53,9 +65,27 @@ export default function DashboardPage() {
     { 
       header: "Actions", 
       cell: (c: Complaint) => (
-        <Link href={`/dashboard/complaints/${c.id}`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
-          <Eye className="h-4 w-4 mr-1"/> View
-        </Link>
+        <div className="flex items-center gap-1">
+          <Link href={`/dashboard/complaints/${c.id}`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
+            <Eye className="h-4 w-4 mr-1"/> View
+          </Link>
+          {c.status === "SUBMITTED" && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-destructive hover:bg-destructive/10 cursor-pointer h-8 px-2"
+              title="Delete complaint (Available while submitted)"
+              onClick={() => {
+                if (window.confirm(`Are you sure you want to cancel and delete complaint ${c.referenceCode}?`)) {
+                  deleteMutation.mutate(c.id);
+                }
+              }}
+              disabled={deleteMutation.isPending}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       ) 
     },
   ];

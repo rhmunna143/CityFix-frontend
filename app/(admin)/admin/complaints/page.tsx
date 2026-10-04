@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchComplaints } from "@/lib/api/complaints";
+import { fetchComplaints, deleteComplaint } from "@/lib/api/complaints";
 import { assignComplaint, fetchUsers } from "@/lib/api/admin";
 import { DataTable } from "@/components/shared/DataTable";
 import { Pagination } from "@/components/shared/Pagination";
@@ -13,7 +13,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { UserPlus, Loader2, AlertCircle } from "lucide-react";
+import { UserPlus, Loader2, AlertCircle, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -125,12 +125,23 @@ function AssignDialog({ complaint }: { complaint: Complaint }) {
 }
 
 export default function AdminComplaintsPage() {
+  const queryClient = useQueryClient();
   const { searchParams, updateUrl, get } = useUrlState();
   const status = get("status");
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["complaints", "admin", searchParams.toString()],
     queryFn: () => fetchComplaints(searchParams),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteComplaint(id),
+    onSuccess: () => {
+      toast.success("Complaint deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+    },
+    onError: (err: any) => toast.error(err.message || "Failed to delete complaint"),
   });
 
   const columns = [
@@ -148,7 +159,25 @@ export default function AdminComplaintsPage() {
     { header: "Date", cell: (c: Complaint) => format(new Date(c.createdAt), "PP") },
     { 
       header: "Actions", 
-      cell: (c: Complaint) => <AssignDialog complaint={c} />
+      cell: (c: Complaint) => (
+        <div className="flex items-center gap-1.5">
+          <AssignDialog complaint={c} />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-destructive hover:bg-destructive/10 cursor-pointer h-8 px-2"
+            title="Delete complaint"
+            onClick={() => {
+              if (window.confirm(`Are you sure you want to delete complaint ${c.referenceCode}?`)) {
+                deleteMutation.mutate(c.id);
+              }
+            }}
+            disabled={deleteMutation.isPending}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      )
     },
   ];
 

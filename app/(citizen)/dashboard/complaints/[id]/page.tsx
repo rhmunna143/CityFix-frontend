@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchComplaintById, submitFeedback, reopenComplaint } from "@/lib/api/complaints";
-import { useParams } from "next/navigation";
+import { fetchComplaintById, submitFeedback, reopenComplaint, deleteComplaint } from "@/lib/api/complaints";
+import { useParams, useRouter } from "next/navigation";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { SkeletonDetail } from "@/components/shared/Skeletons";
@@ -12,13 +12,14 @@ import { initiatePayment } from "@/lib/api/payments";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Zap, CreditCard, Loader2, Star, RefreshCw } from "lucide-react";
+import { Zap, CreditCard, Loader2, Star, RefreshCw, Trash2 } from "lucide-react";
 import { PaymentPurpose } from "@/types/api";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 export default function ComplaintDetail() {
   const { id } = useParams() as { id: string };
+  const router = useRouter();
   const queryClient = useQueryClient();
   
   const { data: complaint, isLoading, error } = useQuery({
@@ -30,6 +31,17 @@ export default function ComplaintDetail() {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteComplaint(id),
+    onSuccess: () => {
+      toast.success("Complaint cancelled and deleted");
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      queryClient.invalidateQueries({ queryKey: ["citizen-stats"] });
+      router.push("/dashboard");
+    },
+    onError: (err: any) => toast.error(err.message || "Failed to delete complaint"),
+  });
 
   const reopenMutation = useMutation({
     mutationFn: () => reopenComplaint(id),
@@ -70,6 +82,24 @@ export default function ComplaintDetail() {
       <PageHeader 
         title={complaint.title} 
         description={`Ref: ${complaint.referenceCode} - Reported on ${format(new Date(complaint.createdAt), "PP")}`}
+        action={
+          complaint.status === "SUBMITTED" ? (
+            <Button
+              variant="destructive"
+              size="sm"
+              className="cursor-pointer"
+              onClick={() => {
+                if (window.confirm("Are you sure you want to cancel and delete this complaint?")) {
+                  deleteMutation.mutate();
+                }
+              }}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+              Delete Complaint
+            </Button>
+          ) : undefined
+        }
       />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
