@@ -11,6 +11,8 @@ import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Role } from "@/types/api";
 
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -63,13 +65,24 @@ export default function LoginPage() {
               </div>
               <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full cursor-pointer" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Log In
             </Button>
           </form>
 
-          <div className="relative my-6">
+          <div className="relative my-5">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+
+          <GoogleSignInButton text="continue_with" />
+
+          <div className="relative my-5">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
             </div>
@@ -79,15 +92,15 @@ export default function LoginPage() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <Button variant="outline" onClick={() => handleDemo("CITIZEN")} disabled={demoLoading !== null}>
+            <Button variant="outline" className="cursor-pointer" onClick={() => handleDemo("CITIZEN")} disabled={demoLoading !== null}>
               {demoLoading === "CITIZEN" && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Demo Citizen
             </Button>
-            <Button variant="outline" onClick={() => handleDemo("STAFF")} disabled={demoLoading !== null}>
+            <Button variant="outline" className="cursor-pointer" onClick={() => handleDemo("STAFF")} disabled={demoLoading !== null}>
               {demoLoading === "STAFF" && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Demo Staff
             </Button>
-            <Button variant="outline" onClick={() => handleDemo("ADMIN")} disabled={demoLoading !== null}>
+            <Button variant="outline" className="cursor-pointer" onClick={() => handleDemo("ADMIN")} disabled={demoLoading !== null}>
               {demoLoading === "ADMIN" && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Demo Admin
             </Button>
