@@ -27,7 +27,7 @@ export type ComplaintStatus =
   | 'RESOLVED'
   | 'CLOSED';
 
-export type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELLED';
+export type PaymentStatus = 'PENDING' | 'SUCCEEDED' | 'FAILED' | 'REFUNDED';
 export type PaymentPurpose = 'PRIORITY_FEE' | 'SERVICE_CHARGE';
 
 export interface User {
@@ -119,4 +119,18 @@ export interface LoginResponseData {
 export interface PaymentInitiateData {
   payment: Payment;
   sessionUrl: string;
+}
+
+export interface AuditLog {
+  id: string;
+  userId: string;
+  action: string;
+  resourceId: string | null;
+  details: any;
+  createdAt: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+  };
 }

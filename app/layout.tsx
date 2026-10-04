@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-full flex flex-col antialiased`}>
+      <body className={`${inter.className} min-h-full flex flex-col antialiased`} suppressHydrationWarning>
         <Providers>
           {children}
           <Toaster position="top-right" richColors />
