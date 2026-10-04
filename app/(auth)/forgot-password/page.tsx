@@ -6,9 +6,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, Mail, KeyRound, Lock, CheckCircle2, ArrowLeft, RotateCw, Eye, EyeOff } from "lucide-react";
+import { Loader2, Mail, KeyRound, Lock, CheckCircle2, RotateCw, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+function ArrowLeftIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m12 19-7-7 7-7" />
+      <path d="M19 12H5" />
+    </svg>
+  );
+}
 
 type Step = "EMAIL" | "OTP" | "NEW_PASSWORD" | "SUCCESS";
 
@@ -181,7 +198,7 @@ export default function ForgotPasswordPage() {
             className="h-7 px-2 gap-1 text-muted-foreground hover:text-foreground cursor-pointer rounded-md text-xs"
             title="Back to login"
           >
-            <ArrowLeft className="h-3.5 w-3.5" />
+            <ArrowLeftIcon className="h-3.5 w-3.5" />
             <span>Back</span>
           </Button>
         </div>
@@ -269,7 +286,7 @@ export default function ForgotPasswordPage() {
                   onClick={() => setStep("EMAIL")}
                   className="text-muted-foreground hover:text-foreground flex items-center gap-1 cursor-pointer transition-colors"
                 >
-                  <ArrowLeft className="h-3 w-3" /> Change email
+                  <ArrowLeftIcon className="h-3 w-3" /> Change email
                 </button>
                 <button
                   type="button"

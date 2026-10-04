@@ -6,13 +6,30 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+
+function ArrowLeftIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m12 19-7-7 7-7" />
+      <path d="M19 12H5" />
+    </svg>
+  );
+}
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -29,14 +46,6 @@ export default function RegisterPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
   });
-
-  const handleBack = () => {
-    if (typeof window !== "undefined" && window.history.length > 1) {
-      router.back();
-    } else {
-      router.push("/login");
-    }
-  };
 
   const onSubmit = async (data: RegisterForm) => {
     setIsLoading(true);
@@ -64,18 +73,15 @@ export default function RegisterPage() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-muted/20 p-4">
       <Card className="w-full max-w-md relative">
         <div className="absolute left-4 top-4 z-10">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={handleBack}
-            className="h-8 px-2 gap-1.5 text-muted-foreground hover:text-foreground cursor-pointer rounded-md"
-            title="Go back"
-            aria-label="Go back"
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 h-8 px-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors cursor-pointer"
+            title="Back to Home"
+            aria-label="Back to Home"
           >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="text-xs font-medium">Back</span>
-          </Button>
+            <ArrowLeftIcon className="h-4 w-4" />
+            <span>Back</span>
+          </Link>
         </div>
         <CardHeader className="space-y-1 text-center pt-8 sm:pt-6">
           <CardTitle className="text-2xl font-bold tracking-tight text-primary">Create an account</CardTitle>
