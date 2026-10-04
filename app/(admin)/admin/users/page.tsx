@@ -39,9 +39,9 @@ export default function AdminUsersPage() {
     queryFn: () => fetchUsers(searchParams),
   });
 
-  const { data: departments } = useQuery({
+  const { data: departments } = useQuery<Department[]>({
     queryKey: ["departments"],
-    queryFn: fetchDepartments,
+    queryFn: () => fetchDepartments(),
   });
 
   const roleMutation = useMutation({

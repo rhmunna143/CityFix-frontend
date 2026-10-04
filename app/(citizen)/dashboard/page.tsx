@@ -1,16 +1,17 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchComplaints } from "@/lib/api/complaints";
+import { fetchComplaints, fetchCitizenStats } from "@/lib/api/complaints";
 import { DataTable } from "@/components/shared/DataTable";
 import { Pagination } from "@/components/shared/Pagination";
 import { SelectFilter } from "@/components/shared/SelectFilter";
+import { StatCard } from "@/components/shared/StatCard";
 import { useUrlState } from "@/hooks/useUrlState";
 import { Complaint } from "@/types/api";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { PlusCircle, Eye } from "lucide-react";
+import { PlusCircle, Eye, FileText, Clock, CheckCircle, TrendingUp, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 
@@ -24,6 +25,17 @@ export default function DashboardPage() {
     queryKey: ["complaints", searchParams.toString()],
     queryFn: () => fetchComplaints(searchParams),
   });
+
+  const { data: stats } = useQuery({
+    queryKey: ["citizen-stats"],
+    queryFn: () => fetchCitizenStats(),
+  });
+
+  // Derived or fetched counts
+  const totalCount = stats?.totalComplaints ?? data?.meta?.total ?? 0;
+  const activeCount = stats?.activeCount ?? 0;
+  const resolvedCount = stats?.resolvedCount ?? 0;
+  const resolutionRate = totalCount > 0 ? Math.round((resolvedCount / totalCount) * 100) : 0;
 
   const columns = [
     { header: "Reference", accessorKey: "referenceCode" as keyof Complaint },
@@ -55,14 +67,60 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <PageHeader 
-        title="My Complaints" 
-        description="Track and manage the issues you've reported."
+        title="Citizen Dashboard" 
+        description="Track and manage your submitted complaints and view performance metrics."
         action={
           <Link href="/dashboard/complaints/new" className={buttonVariants({ variant: "default" })}>
             <PlusCircle className="h-4 w-4 mr-2" /> Report Issue
           </Link>
         }
       />
+
+      {/* Analytics Stat Cards */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="Total Reported"
+          value={totalCount}
+          description="All grievances submitted"
+          icon={<FileText className="h-4 w-4 text-primary" />}
+          onClick={() => updateUrl({ status: "" })}
+        />
+        <StatCard
+          title="In Progress"
+          value={activeCount}
+          description="Under active handling"
+          icon={<Clock className="h-4 w-4 text-amber-500" />}
+          onClick={() => updateUrl({ status: "IN_PROGRESS" })}
+        />
+        <StatCard
+          title="Resolved"
+          value={resolvedCount}
+          description="Successfully resolved issues"
+          icon={<CheckCircle className="h-4 w-4 text-emerald-500" />}
+          onClick={() => updateUrl({ status: "RESOLVED" })}
+        />
+        <StatCard
+          title="Resolution Rate"
+          value={`${resolutionRate}%`}
+          description={stats?.slaBreachedCount ? `${stats.slaBreachedCount} overdue` : "Overall resolution rate"}
+          icon={<TrendingUp className="h-4 w-4 text-blue-500" />}
+        />
+      </div>
+
+      {/* Category breakdown badges if present */}
+      {stats?.complaintsByCategory && stats.complaintsByCategory.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 p-3 bg-muted/30 rounded-lg border border-border/50 text-xs">
+          <span className="font-semibold flex items-center gap-1.5 text-muted-foreground mr-1">
+            <BarChart3 className="h-3.5 w-3.5" /> Issues by Category:
+          </span>
+          {stats.complaintsByCategory.map((cat: { name: string; value: number }) => (
+            <Badge key={cat.name} variant="outline" className="px-2 py-0.5 gap-1 bg-background">
+              <span>{cat.name}</span>
+              <span className="font-semibold text-primary">({cat.value})</span>
+            </Badge>
+          ))}
+        </div>
+      )}
 
       <div className="flex gap-4 items-center">
         <SelectFilter 

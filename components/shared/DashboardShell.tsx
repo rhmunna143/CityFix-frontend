@@ -2,9 +2,10 @@
 
 import { ReactNode } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, Bell } from 'lucide-react';
+import { LogOut, Bell, ArrowLeft } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getNotifications } from '@/lib/api/notifications';
 
@@ -20,6 +21,7 @@ interface DashboardShellProps {
 }
 
 export function DashboardShell({ children, navItems }: DashboardShellProps) {
+  const router = useRouter();
   const { user, logout } = useAuth();
   
   const { data: notificationsData } = useQuery({
@@ -40,7 +42,7 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center gap-2 px-2 py-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+              className="flex items-center gap-2 px-2 py-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors cursor-pointer"
             >
               {item.icon}
               {item.title}
@@ -49,12 +51,24 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
         </nav>
       </aside>
       <div className="flex flex-col flex-1 min-w-0">
-        <header className="h-14 lg:h-16 flex items-center gap-4 border-b bg-background px-4 md:px-8">
-          {/* Mobile menu could go here */}
+        <header className="h-14 lg:h-16 flex items-center justify-between border-b bg-background px-4 md:px-8">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.back()}
+              className="h-8 px-2.5 gap-1.5 text-muted-foreground hover:text-foreground cursor-pointer rounded-lg border-border hover:bg-accent transition-colors"
+              title="Go back"
+              aria-label="Go back"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span className="text-xs font-medium hidden sm:inline">Back</span>
+            </Button>
+          </div>
           <div className="ml-auto flex items-center gap-4">
             {user?.role !== 'SUPER_ADMIN' && (
               <Link href={user?.role === 'CITIZEN' ? '/dashboard/notifications' : user?.role === 'STAFF' ? '/staff/notifications' : '/admin/notifications'} className="relative mr-2">
-                <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground">
+                <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground cursor-pointer">
                   <Bell className="h-5 w-5" />
                   {unreadCount > 0 && (
                     <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive border-2 border-background"></span>
@@ -63,7 +77,7 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
               </Link>
             )}
             <span className="text-sm font-medium hidden sm:inline-block">{user?.name || 'User'}</span>
-            <Button variant="ghost" size="sm" onClick={() => logout()}>
+            <Button variant="ghost" size="sm" onClick={() => logout()} className="cursor-pointer">
               <LogOut className="h-4 w-4 mr-2 hidden sm:inline-block" />
               <span className="hidden sm:inline-block">Logout</span>
               <LogOut className="h-4 w-4 sm:hidden" />

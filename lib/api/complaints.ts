@@ -113,3 +113,23 @@ export async function reopenComplaint(id: string): Promise<Complaint> {
   const data = await res.json();
   return data.data;
 }
+
+export async function fetchCitizenStats() {
+  const res = await fetch('/api/proxy/complaints/stats/citizen');
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.message || "Failed to fetch citizen stats");
+  }
+  const data = await res.json();
+  return data.data;
+}
+
+export async function fetchStaffStats() {
+  const res = await fetch('/api/proxy/complaints/stats/staff');
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.message || "Failed to fetch staff stats");
+  }
+  const data = await res.json();
+  return data.data;
+}

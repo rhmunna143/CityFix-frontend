@@ -145,4 +145,30 @@
   html {
     @apply font-sans;
   }
+
+  button,
+  [role="button"],
+  select,
+  summary,
+  a,
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"],
+  input[type="checkbox"],
+  input[type="radio"],
+  [data-slot="button"],
+  [data-slot="select-trigger"],
+  [data-slot="select-item"],
+  [data-slot="tabs-trigger"],
+  [data-slot="dropdown-menu-item"],
+  [data-slot="dialog-close"] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  input:disabled,
+  [data-disabled] {
+    cursor: not-allowed;
+  }
 }
