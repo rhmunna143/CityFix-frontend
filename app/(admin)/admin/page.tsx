@@ -138,7 +138,7 @@ export default function AdminDashboard() {
           <CardHeader>
             <CardTitle>Complaints by Status</CardTitle>
           </CardHeader>
-          <CardContent className="h-[300px]">
+          <CardContent className="h-75">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
           <CardHeader>
             <CardTitle>Complaints by Department</CardTitle>
           </CardHeader>
-          <CardContent className="h-[300px]">
+          <CardContent className="h-75">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={complaintsByDepartment}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -180,7 +180,7 @@ export default function AdminDashboard() {
           <CardHeader>
             <CardTitle>Resolution Time Trend (Avg Hours)</CardTitle>
           </CardHeader>
-          <CardContent className="h-[300px]">
+          <CardContent className="h-75">
              <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={resolutionTimeTrend}>
                    <CartesianGrid strokeDasharray="3 3" />

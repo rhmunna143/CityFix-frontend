@@ -109,7 +109,7 @@ export default function DepartmentsPage() {
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="w-[100px] text-right">Actions</TableHead>
+              <TableHead className="w-25 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -136,7 +136,7 @@ export default function DepartmentsPage() {
                     {displayName}
                     {isDeleted && <span className="ml-2 text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded">Deleted</span>}
                   </TableCell>
-                  <TableCell className="text-muted-foreground truncate max-w-[300px]">{dept.description || "—"}</TableCell>
+                  <TableCell className="text-muted-foreground truncate max-w-75">{dept.description || "—"}</TableCell>
                   <TableCell>{isDeleted ? 'Inactive' : 'Active'}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
