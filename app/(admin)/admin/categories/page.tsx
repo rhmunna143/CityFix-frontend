@@ -226,8 +226,12 @@ export default function CategoriesPage() {
             <div className="space-y-2">
               <Label>Department</Label>
               <Select value={departmentId} onValueChange={(v) => setDepartmentId(v || "")}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a department" />
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a department">
+                    {departmentId 
+                      ? departments?.find((d: Department) => d.id === departmentId)?.name.replace(/_DELETED_\d+$/, '') 
+                      : undefined}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {departments?.map((dept: Department) => (

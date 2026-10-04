@@ -19,6 +19,9 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+import { fetchDepartments } from "@/lib/api/admin";
+import { Department } from "@/types/api";
+
 function AssignDialog({ complaint }: { complaint: Complaint }) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -35,6 +38,12 @@ function AssignDialog({ complaint }: { complaint: Complaint }) {
     enabled: open,
   });
 
+  const { data: departments } = useQuery({
+    queryKey: ["departments", "all"],
+    queryFn: () => fetchDepartments("all"),
+    enabled: open,
+  });
+
   const assignMutation = useMutation({
     mutationFn: (staffId: string) => assignComplaint(complaint.id, staffId),
     onSuccess: () => {
@@ -48,6 +57,13 @@ function AssignDialog({ complaint }: { complaint: Complaint }) {
   });
 
   const isChargeableAndUnpaid = false;
+
+  const getStaffDisplayText = (staffId: string) => {
+    const staff = staffData?.items?.find((s: any) => s.id === staffId);
+    if (!staff) return "";
+    const dept = departments?.find((d: Department) => d.id === staff.staffProfile?.departmentId)?.name;
+    return `${staff.name} - ${dept ? dept.replace(/_DELETED_\d+$/, '') : 'No Dept'}`;
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -70,18 +86,23 @@ function AssignDialog({ complaint }: { complaint: Complaint }) {
         ) : (
           <div className="space-y-4 py-4">
              <Select value={selectedStaff} onValueChange={(val) => setSelectedStaff(val || "")}>
-               <SelectTrigger>
-                 <SelectValue placeholder="Select staff member" />
+               <SelectTrigger className="w-full">
+                 <SelectValue placeholder="Select staff member">
+                   {selectedStaff ? getStaffDisplayText(selectedStaff) : undefined}
+                 </SelectValue>
                </SelectTrigger>
-               <SelectContent>
+               <SelectContent className="max-w-[90vw]">
                  {staffLoading ? (
                    <SelectItem value="loading" disabled>Loading staff...</SelectItem>
                  ) : (
-                   staffData?.items.map(staff => (
-                     <SelectItem key={staff.id} value={staff.id}>
-                       {staff.name} ({staff.email})
-                     </SelectItem>
-                   ))
+                   staffData?.items?.map((staff: any) => {
+                     const dept = departments?.find((d: Department) => d.id === staff.staffProfile?.departmentId)?.name;
+                     return (
+                       <SelectItem key={staff.id} value={staff.id}>
+                         {staff.name} - {dept ? dept.replace(/_DELETED_\d+$/, '') : 'No Dept'}
+                       </SelectItem>
+                     );
+                   })
                  )}
                </SelectContent>
              </Select>

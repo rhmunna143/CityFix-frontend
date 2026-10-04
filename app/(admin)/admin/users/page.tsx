@@ -66,8 +66,8 @@ export default function AdminUsersPage() {
   const openRoleDialog = (user: User) => {
     setSelectedUser(user);
     setNewRole(user.role);
-    setDepartmentId("");
-    setEmployeeCode("");
+    setDepartmentId(user.staffProfile?.departmentId || "");
+    setEmployeeCode(user.staffProfile?.employeeCode || "");
     setIsRoleDialogOpen(true);
   };
 
@@ -95,12 +95,21 @@ export default function AdminUsersPage() {
       ) 
     },
     { 
-      header: "Role", 
-      cell: (u: User) => (
-        <Badge variant={u.role === "ADMIN" || u.role === "SUPER_ADMIN" ? "default" : u.role === "STAFF" ? "secondary" : "outline"}>
-          {u.role}
-        </Badge>
-      ) 
+      header: "Role & Dept", 
+      cell: (u: User) => {
+        const dept = u.staffProfile?.departmentId 
+          ? departments?.find((d: Department) => d.id === u.staffProfile?.departmentId)?.name 
+          : null;
+        
+        return (
+          <div className="flex flex-col gap-1 items-start">
+            <Badge variant={u.role === "ADMIN" || u.role === "SUPER_ADMIN" ? "default" : u.role === "STAFF" ? "secondary" : "outline"}>
+              {u.role}
+            </Badge>
+            {dept && <span className="text-xs text-muted-foreground">{dept.replace(/_DELETED_\d+$/, '')}</span>}
+          </div>
+        )
+      } 
     },
     { header: "Joined", cell: (u: User) => format(new Date(u.createdAt), "PP") },
     { 
@@ -112,7 +121,7 @@ export default function AdminUsersPage() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => openRoleDialog(u)}>
-              <ShieldAlert className="mr-2 h-4 w-4" /> Change Role
+              <ShieldAlert className="mr-2 h-4 w-4" /> Edit Role & Dept
             </DropdownMenuItem>
             <DropdownMenuItem 
               onClick={() => statusMutation.mutate({ id: u.id, isActive: !u.isActive })}
@@ -198,13 +207,16 @@ export default function AdminUsersPage() {
                 <div className="space-y-2">
                   <Label>Department</Label>
                   <Select value={departmentId} onValueChange={(v) => setDepartmentId(v || "")}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a department" />
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a department">
+                        {departmentId 
+                          ? departments?.find((d: Department) => d.id === departmentId)?.name.replace(/_DELETED_\d+$/, '') 
+                          : undefined}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="unassigned" disabled className="hidden">Select a department</SelectItem>
                       {departments?.map((dept: Department) => (
-                        <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
+                        <SelectItem key={dept.id} value={dept.id}>{dept.name.replace(/_DELETED_\d+$/, '')}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
