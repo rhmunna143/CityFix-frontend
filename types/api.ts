@@ -58,6 +58,7 @@ export interface Category {
   slaHours?: number;
   basePrice?: string; // Decimal as string
   departmentId?: string;
+  department?: Department;
   isActive?: boolean;
   deletedAt?: string | null;
 }
