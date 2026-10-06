@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ContactForm } from "@/components/public/ContactForm";
-import { 
-  FadeIn, 
-  StaggerContainer, 
-  StaggerItem, 
-  HoverLiftCard, 
-  FloatingBadge 
+import {
+  FadeIn,
+  StaggerContainer,
+  StaggerItem,
+  HoverLiftCard,
+  FloatingBadge,
 } from "@/components/public/MotionWrappers";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -39,6 +40,36 @@ const faqs: FAQItem[] = [
   },
 ];
 
+const municipalHubs = [
+  {
+    name: "Central City Hall Citizen Hub",
+    address: "100 Municipal Way &bull; Zone 1",
+    hours: "Mon–Fri, 8:00 AM – 5:00 PM",
+    phone: "+1 (800) 555-CITY (Ext. 101)",
+    role: "Walk-in registration, public hearings, permits",
+    image:
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    name: "North District Public Works Depot",
+    address: "45 North Infrastructure Blvd &bull; Ward 2",
+    hours: "Mon–Sat, 7:00 AM – 6:00 PM",
+    phone: "+1 (800) 555-ROAD (Ext. 204)",
+    role: "Pothole dispatch, asphalt repair staging",
+    image:
+      "https://i.ibb.co.com/pBNPKcyB/chloe-forbes-kindlen-o3-JVSTf-GF3k-unsplash.jpg",
+  },
+  {
+    name: "East Water & Sanitation Emergency Center",
+    address: "12 Riverfront Parkway &bull; Ward 3",
+    hours: "24/7 Active Field Response",
+    phone: "+1 (800) 555-DRAIN (Ext. 308)",
+    role: "Water main breaches, emergency flood drainage",
+    image:
+      "https://i.ibb.co.com/vvX2n63j/combination-tanker-removing-flood-water.webp",
+  },
+];
+
 export function ContactClient() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
@@ -48,7 +79,7 @@ export function ContactClient() {
 
   return (
     <div className="space-y-16 w-full">
-      {/* Header */}
+      {/* 1. Header */}
       <div className="space-y-4 max-w-3xl">
         <FadeIn direction="down" duration={0.4}>
           <FloatingBadge className="inline-flex">
@@ -70,12 +101,46 @@ export function ContactClient() {
 
         <FadeIn delay={0.2} duration={0.5}>
           <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
-            Need assistance with an existing ticket, have questions about municipal services, or wish to report feedback? Reach out using the form below or contact our city helplines.
+            Need assistance with an existing ticket, have questions about
+            municipal services, or wish to report feedback? Reach out using the
+            form below or contact our city helplines.
           </p>
         </FadeIn>
       </div>
 
-      {/* Main Grid: Form + Quick Contact Information */}
+      {/* 2. Urgent Emergency Callout Strip */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-destructive/10 border border-destructive/25 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-destructive/20 text-destructive flex items-center justify-center font-bold text-lg shrink-0">
+            🚨
+          </div>
+          <div className="space-y-0.5 text-center sm:text-left">
+            <h4 className="font-bold text-sm text-foreground">
+              Critical Urban Safety Hazards?
+            </h4>
+            <p className="text-xs text-muted-foreground">
+              For sinkholes, collapsed roadways, ruptured gas mains, or fallen
+              high-voltage power cables, call immediate dispatch:
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <a
+            href="tel:311"
+            className="px-4 py-2 rounded-xl bg-destructive text-destructive-foreground font-mono font-bold text-xs shadow-xs hover:bg-destructive/90 transition-colors"
+          >
+            Direct 311 Line
+          </a>
+          <a
+            href="tel:911"
+            className="px-4 py-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-black font-mono font-bold text-xs shadow-xs hover:opacity-90 transition-opacity"
+          >
+            Emergency 911
+          </a>
+        </div>
+      </div>
+
+      {/* 3. Main Grid: Form + Quick Contact Information */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
         {/* Form Column */}
         <div className="lg:col-span-7">
@@ -87,8 +152,14 @@ export function ContactClient() {
           <FadeIn direction="left" delay={0.2}>
             <div className="rounded-2xl border bg-card p-6 md:p-7 space-y-5 shadow-xs">
               <h3 className="font-bold text-lg text-foreground flex items-center gap-2">
-                <svg className="h-5 w-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                <svg
+                  className="h-5 w-5 text-primary"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                 </svg>
                 Emergency & Quick Helplines
               </h3>
@@ -107,7 +178,9 @@ export function ContactClient() {
                     <span className="font-mono text-lg font-bold text-foreground block">
                       311 / +1 (800) 555-CITY
                     </span>
-                    <p className="text-xs text-muted-foreground">Available Mon–Fri, 8:00 AM – 5:00 PM EST</p>
+                    <p className="text-xs text-muted-foreground">
+                      Available Mon–Fri, 8:00 AM – 5:00 PM EST
+                    </p>
                   </div>
                 </HoverLiftCard>
 
@@ -119,7 +192,9 @@ export function ContactClient() {
                     <span className="font-semibold text-foreground block">
                       support@cityfix.local
                     </span>
-                    <p className="text-xs text-muted-foreground">Typical response time: under 4 business hours</p>
+                    <p className="text-xs text-muted-foreground">
+                      Typical response time: under 4 business hours
+                    </p>
                   </div>
                 </HoverLiftCard>
 
@@ -131,7 +206,9 @@ export function ContactClient() {
                     <span className="font-semibold text-foreground block">
                       City Hall, 100 Municipal Way
                     </span>
-                    <p className="text-xs text-muted-foreground">Civic Center Zone 1 &bull; Walk-in desk open 9am-4pm</p>
+                    <p className="text-xs text-muted-foreground">
+                      Civic Center Zone 1 &bull; Walk-in desk open 9am-4pm
+                    </p>
                   </div>
                 </HoverLiftCard>
               </div>
@@ -140,14 +217,81 @@ export function ContactClient() {
         </div>
       </div>
 
-      {/* Frequently Asked Questions with Animated Accordion */}
+      {/* 4. Municipal Walk-in District Hubs */}
+      <div className="space-y-8 pt-4">
+        <FadeIn className="text-center space-y-2 max-w-xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            Municipal Field Operations Centers
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Visit our regional branch offices for in-person consultations, paper
+            verification, or equipment depot inquiries.
+          </p>
+        </FadeIn>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {municipalHubs.map((hub, idx) => (
+            <HoverLiftCard key={idx} className="h-full">
+              <div className="rounded-2xl border bg-card overflow-hidden shadow-xs hover:border-primary/40 transition-all flex flex-col justify-between h-full">
+                <div>
+                  <div className="relative h-44 w-full">
+                    <Image
+                      src={hub.image}
+                      alt={hub.name}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <div className="absolute bottom-3 left-3 right-3 text-white">
+                      <h4 className="font-bold text-sm tracking-tight">
+                        {hub.name}
+                      </h4>
+                    </div>
+                  </div>
+
+                  <div className="p-5 space-y-3">
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {hub.role}
+                    </p>
+                    <div className="space-y-1 pt-2 border-t text-xs">
+                      <div className="flex items-center gap-1.5 text-muted-foreground">
+                        <span className="font-semibold text-foreground">
+                          Address:
+                        </span>
+                        <span
+                          dangerouslySetInnerHTML={{ __html: hub.address }}
+                        />
+                      </div>
+                      <div className="flex items-center gap-1.5 text-muted-foreground">
+                        <span className="font-semibold text-foreground">
+                          Hours:
+                        </span>
+                        <span>{hub.hours}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-muted-foreground font-mono">
+                        <span className="font-semibold text-foreground">
+                          Phone:
+                        </span>
+                        <span>{hub.phone}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </HoverLiftCard>
+          ))}
+        </div>
+      </div>
+
+      {/* 5. Frequently Asked Questions with Animated Accordion */}
       <div className="space-y-6 pt-6 border-t">
         <FadeIn className="space-y-2 text-center max-w-2xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             Frequently Asked Questions
           </h2>
           <p className="text-sm text-muted-foreground">
-            Quick answers to common questions about CityFix and municipal resolution workflows.
+            Quick answers to common questions about CityFix and municipal
+            resolution workflows.
           </p>
         </FadeIn>
 
@@ -161,7 +305,7 @@ export function ContactClient() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: idx * 0.05 }}
-                className="rounded-2xl border bg-card/80 backdrop-blur-xs overflow-hidden shadow-xs hover:border-primary/30 transition-colors"
+                className="rounded-2xl border bg-card/80 backdrop-blur-xs overflow-hidden shadow-xs hover:border-primary/40 transition-colors"
               >
                 <button
                   type="button"
@@ -177,8 +321,14 @@ export function ContactClient() {
                     transition={{ duration: 0.2 }}
                     className="h-6 w-6 rounded-full bg-muted flex items-center justify-center shrink-0 text-muted-foreground"
                   >
-                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="6 9 12 15 18 9"/>
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <polyline points="6 9 12 15 18 9" />
                     </svg>
                   </motion.span>
                 </button>

@@ -93,7 +93,7 @@ export default function LoginPage() {
               <Image src={"/mango.png"} width={"60"} height={"60"} alt="logo" />
             </div>
 
-            <CardTitle className="text-4xl font-bold tracking-tight text-primary montecarlo-regular">
+            <CardTitle className="text-4xl font-bold tracking-tight montecarlo-regular">
               CityFix
             </CardTitle>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { buttonVariants } from "@/components/ui/button";
 import { 
   FadeIn, 
@@ -54,9 +55,57 @@ export function AboutClient() {
     },
   ];
 
+  const milestones = [
+    {
+      year: "2024",
+      title: "Grassroots Civic Hackathon",
+      desc: "Conceived as an open-source prototype to replace lost paper forms and unresponsive telephone lines in Ward 4.",
+      badge: "Inception",
+    },
+    {
+      year: "2025",
+      title: "Municipal Council Partnership",
+      desc: "Adopted by the Department of Roads and Public Works, reducing average pothole turnaround time from 14 days to 48 hours.",
+      badge: "Department Pilot",
+    },
+    {
+      year: "2026",
+      title: "Citywide Smart Governance",
+      desc: "Integrated with live GPS geotagging, automated SLA watchdog timers, mobile field verification, and open transparency ledger.",
+      badge: "Full Scale",
+    },
+  ];
+
+  const team = [
+    {
+      name: "Farhan Hossain",
+      role: "Lead Civic Technologist",
+      bio: "Advocating for digital public infrastructure and frictionless government accountability.",
+      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    },
+    {
+      name: "Sarah Jenkins",
+      role: "Head of Systems Architecture",
+      bio: "Architecting real-time event pipelines, SLA watchdog timers, and immutable audit logs.",
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
+    },
+    {
+      name: "Michael Chen",
+      role: "Director of Municipal Field Ops",
+      bio: "Bridging the gap between field technicians, dispatch equipment, and on-site photo proofs.",
+      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
+    },
+    {
+      name: "Amira Hassan",
+      role: "Citizen Rights & Accessibility",
+      bio: "Ensuring every resident, regardless of digital familiarity, can easily file and track issues.",
+      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80",
+    },
+  ];
+
   return (
     <div className="space-y-16 w-full">
-      {/* Hero / Header */}
+      {/* 1. Hero / Header */}
       <div className="space-y-4 max-w-3xl">
         <FadeIn direction="down" duration={0.4}>
           <FloatingBadge className="inline-flex">
@@ -83,7 +132,31 @@ export function AboutClient() {
         </FadeIn>
       </div>
 
-      {/* Comparison: The Old Way vs The CityFix Way */}
+      {/* 2. Visual Civic Mission Photo Banner */}
+      <FadeIn delay={0.15}>
+        <div className="relative rounded-3xl overflow-hidden border border-border/80 shadow-2xl h-72 sm:h-88 group">
+          <Image
+            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1400&q=80"
+            alt="Modern Civic Center Architecture"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-700"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />
+          <div className="absolute bottom-6 left-6 right-6 text-white space-y-2">
+            <span className="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider block">
+              Civic Infrastructure Evolution
+            </span>
+            <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              A Platform Built for the Public Good
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-300 max-w-2xl leading-relaxed">
+              We envision cities where public infrastructure is continuously maintained, municipal departments operate transparently, and every resident feels empowered to make their neighborhood better.
+            </p>
+          </div>
+        </div>
+      </FadeIn>
+
+      {/* 3. Comparison: The Old Way vs The CityFix Way */}
       <div className="space-y-6">
         <FadeIn>
           <div className="text-center space-y-2 max-w-xl mx-auto">
@@ -159,7 +232,38 @@ export function AboutClient() {
         </div>
       </div>
 
-      {/* Core Principles */}
+      {/* 4. Evolution Timeline */}
+      <div className="space-y-8">
+        <FadeIn className="text-center space-y-2 max-w-xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            Our Journey & Milestones
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            How CityFix grew from a neighborhood initiative to a full municipal platform.
+          </p>
+        </FadeIn>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {milestones.map((m, idx) => (
+            <HoverLiftCard key={idx} className="h-full">
+              <div className="p-6 rounded-2xl border bg-card space-y-3 h-full shadow-xs flex flex-col justify-between">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-black font-mono text-primary">{m.year}</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary uppercase">
+                      {m.badge}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-base text-foreground">{m.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{m.desc}</p>
+                </div>
+              </div>
+            </HoverLiftCard>
+          ))}
+        </div>
+      </div>
+
+      {/* 5. Core Principles */}
       <div className="space-y-8">
         <FadeIn className="text-center space-y-2 max-w-2xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
@@ -196,9 +300,47 @@ export function AboutClient() {
         </StaggerContainer>
       </div>
 
-      {/* Bottom CTA Card */}
+      {/* 6. Leadership & Engineering Team */}
+      <div className="space-y-8">
+        <FadeIn className="text-center space-y-2 max-w-xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            Engineering & Civic Leadership
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            The civic technologists and public infrastructure engineers behind CityFix.
+          </p>
+        </FadeIn>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {team.map((t, idx) => (
+            <HoverLiftCard key={idx} className="h-full">
+              <div className="p-5 rounded-2xl border bg-card space-y-3 h-full shadow-xs hover:border-primary/40 transition-colors flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="relative h-24 w-24 rounded-2xl overflow-hidden border border-border/80 mx-auto">
+                    <Image
+                      src={t.image}
+                      alt={t.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="text-center space-y-0.5">
+                    <h4 className="font-bold text-sm text-foreground">{t.name}</h4>
+                    <span className="text-[11px] font-semibold text-primary block">{t.role}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground text-center leading-relaxed">
+                    {t.bio}
+                  </p>
+                </div>
+              </div>
+            </HoverLiftCard>
+          ))}
+        </div>
+      </div>
+
+      {/* 7. Bottom CTA Card */}
       <FadeIn>
-        <div className="rounded-2xl border bg-gradient-to-r from-primary/10 via-background to-primary/5 p-8 sm:p-10 text-center space-y-4">
+        <div className="rounded-2xl border bg-gradient-to-r from-primary/10 via-background to-primary/5 p-8 sm:p-10 text-center space-y-4 shadow-sm">
           <h3 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
             Ready to experience next-generation civic service?
           </h3>
