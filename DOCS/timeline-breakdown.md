@@ -57,8 +57,19 @@
 - [x] **SEO & Social Metadata**:
   - Custom `Metadata` (`title`, `description`, `openGraph`) configured on every public page.
   - Next.js dynamic `app/robots.ts` and `app/sitemap.ts` configured for search engine crawling.
+- [x] **Theme System & Framer Motion Animations**:
+  - Global dark and light mode theme toggle system using `next-themes` and Framer Motion micro-interactions.
+  - Integrated `ThemeToggle` component across public `Navbar` (desktop & mobile) and `DashboardShell` (citizen, staff, admin headers).
+  - Framer Motion animation suite (`FadeIn`, `StaggerContainer`, `StaggerItem`, `HoverLiftCard`, `AnimatedCounter`, `FloatingBadge`, `ScrollProgressBar`, `AnimatePresence`).
+  - Interactive incident switcher in Hero, animated department tab pill indicator, animated category progress bars, and animated FAQ accordion.
+- [x] **AI Civic Assistant & Floating Action Controls**:
+  - **CityFix Civic AI Assistant (`AiAssistantChat`)**: Interactive live chat modal with 24/7 municipal guidance, question suggestions, smart responses for road/water/waste/SLA queries, action links, and typing animations.
+  - **Go To Top Floating Button (`ScrollToTop`)**: Scroll-triggered floating button with smooth scroll-to-top behavior and Framer Motion spring elevation.
+  - **Top Scroll Progress Bar (`ScrollProgressBar`)**: Viewport progress bar attached to window scroll.
+- [x] **Expanded Home Page (11 Dynamic Sections)**:
+  - Hero with interactive case switcher, stats strip with animated counters, live city action radar, 3-phase workflow guide, interactive before & after resolution slider, municipal services catalog, department SLA accountability leaderboard, verified citizen testimonials, mobile app smart features, homepage interactive FAQ accordion, and radiant CTA banner.
 - [x] **Navigation & Layout Polish**:
-  - `Navbar`: Responsive mobile navigation drawer, brand identity badge, and auth-state awareness (links to citizen/staff/admin dashboard when authenticated).
+  - `Navbar`: Responsive mobile navigation drawer, brand identity badge, dark/light theme switch, and auth-state awareness (links to citizen/staff/admin dashboard when authenticated).
   - `Footer`: Multi-column layout with civic directories, emergency contacts, and live operational status indicator.
   - Direct `/` back button redirects on Login and Register pages.
 - [x] **Performance & Optimization**:

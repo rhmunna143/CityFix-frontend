@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { LogOut, Bell, ArrowLeft } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getNotifications } from '@/lib/api/notifications';
+import { ThemeToggle } from '@/components/shared/ThemeToggle';
 
 interface NavItem {
   title: string;
@@ -65,9 +66,10 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
               <span className="text-xs font-medium hidden sm:inline">Back</span>
             </Button>
           </div>
-          <div className="ml-auto flex items-center gap-4">
+          <div className="ml-auto flex items-center gap-3">
+            <ThemeToggle />
             {user?.role !== 'SUPER_ADMIN' && (
-              <Link href={user?.role === 'CITIZEN' ? '/dashboard/notifications' : user?.role === 'STAFF' ? '/staff/notifications' : '/admin/notifications'} className="relative mr-2">
+              <Link href={user?.role === 'CITIZEN' ? '/dashboard/notifications' : user?.role === 'STAFF' ? '/staff/notifications' : '/admin/notifications'} className="relative mr-1">
                 <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground cursor-pointer">
                   <Bell className="h-5 w-5" />
                   {unreadCount > 0 && (

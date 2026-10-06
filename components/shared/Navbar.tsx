@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -70,7 +71,8 @@ export function Navbar() {
         </nav>
 
         {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2.5">
+          <ThemeToggle />
           {user ? (
             <Link
               href={getDashboardHref()}
@@ -108,8 +110,9 @@ export function Navbar() {
           )}
         </div>
 
-        {/* Mobile Hamburger Button */}
-        <div className="flex md:hidden items-center gap-2">
+        {/* Mobile Hamburger Button & Theme Toggle */}
+        <div className="flex md:hidden items-center gap-1.5">
+          <ThemeToggle />
           <Button
             variant="ghost"
             size="icon"

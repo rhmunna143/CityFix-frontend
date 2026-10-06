@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ServicesCatalogProps {
   departments: Department[];
@@ -39,9 +40,14 @@ export function ServicesCatalog({ departments, categories }: ServicesCatalogProp
   return (
     <div className="space-y-8">
       {/* Search and Filters */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 p-4 rounded-xl border bg-card/60 backdrop-blur-xs">
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 p-4 rounded-2xl border bg-card/70 backdrop-blur-md shadow-xs"
+      >
         <div className="relative flex-1 max-w-md">
-          <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="11" cy="11" r="8"/>
             <path d="m21 21-4.3-4.3"/>
           </svg>
@@ -50,46 +56,66 @@ export function ServicesCatalog({ departments, categories }: ServicesCatalogProp
             placeholder="Search categories (e.g. Pothole, Road, Sanitation)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
+            className="pl-10 h-10 rounded-xl"
           />
         </div>
 
-        {/* Department Quick Filter Buttons */}
+        {/* Department Quick Filter Buttons with Layout Animation */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           <button
             type="button"
             onClick={() => setSelectedDept("ALL")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
+            className={`relative px-3.5 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
               selectedDept === "ALL"
-                ? "bg-primary text-primary-foreground font-semibold shadow-xs"
-                : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
+                ? "text-primary-foreground font-semibold"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
             }`}
           >
+            {selectedDept === "ALL" && (
+              <motion.span
+                layoutId="activeDeptPill"
+                className="absolute inset-0 bg-primary rounded-xl shadow-xs -z-10"
+                transition={{ type: "spring", stiffness: 380, damping: 30 }}
+              />
+            )}
             All Departments ({categories.length})
           </button>
+
           {departments.map((dept) => {
             const count = categories.filter((c) => c.departmentId === dept.id).length;
+            const isSelected = selectedDept === dept.id;
             return (
               <button
                 key={dept.id}
                 type="button"
                 onClick={() => setSelectedDept(dept.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
-                  selectedDept === dept.id
-                    ? "bg-primary text-primary-foreground font-semibold shadow-xs"
-                    : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
+                className={`relative px-3.5 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
+                  isSelected
+                    ? "text-primary-foreground font-semibold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
                 }`}
               >
+                {isSelected && (
+                  <motion.span
+                    layoutId="activeDeptPill"
+                    className="absolute inset-0 bg-primary rounded-xl shadow-xs -z-10"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
                 {dept.name} ({count})
               </button>
             );
           })}
         </div>
-      </div>
+      </motion.div>
 
-      {/* Categories Grid */}
+      {/* Categories Grid with AnimatePresence */}
       {filteredCategories.length === 0 ? (
-        <div className="text-center py-16 border rounded-2xl bg-card space-y-3">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center py-16 border rounded-2xl bg-card space-y-3"
+        >
           <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
             <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
@@ -106,57 +132,74 @@ export function ServicesCatalog({ departments, categories }: ServicesCatalogProp
           >
             Reset Filters
           </button>
-        </div>
+        </motion.div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCategories.map((cat) => {
-            const isPaid = !!cat.basePrice && parseFloat(cat.basePrice) > 0;
-            return (
-              <Card key={cat.id} className="flex flex-col justify-between hover:shadow-md transition-shadow border">
-                <CardHeader className="space-y-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <Badge variant="outline" className="text-[11px] font-normal">
-                      {departments.find((d) => d.id === cat.departmentId)?.name || cat.department?.name || "Municipal"}
-                    </Badge>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                      <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                      </svg>
-                      {cat.slaHours ? `${cat.slaHours}h SLA` : "Standard SLA"}
-                    </span>
-                  </div>
-                  <CardTitle className="text-xl font-bold tracking-tight text-foreground">
-                    {cat.name}
-                  </CardTitle>
-                  <CardDescription className="text-sm line-clamp-2">
-                    {cat.description || "General municipal maintenance and service request category."}
-                  </CardDescription>
-                </CardHeader>
+        <motion.div 
+          layout
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          <AnimatePresence>
+            {filteredCategories.map((cat, index) => {
+              const isPaid = !!cat.basePrice && parseFloat(cat.basePrice) > 0;
+              const deptName = departments.find((d) => d.id === cat.departmentId)?.name || cat.department?.name || "Municipal";
+              return (
+                <motion.div
+                  key={cat.id}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.35, delay: Math.min(index * 0.05, 0.3) }}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="h-full"
+                >
+                  <Card className="flex flex-col justify-between h-full hover:shadow-lg hover:border-primary/40 transition-all border bg-card/90">
+                    <CardHeader className="space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <Badge variant="outline" className="text-[11px] font-medium bg-muted/40">
+                          {deptName}
+                        </Badge>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                          </svg>
+                          {cat.slaHours ? `${cat.slaHours}h SLA` : "Standard SLA"}
+                        </span>
+                      </div>
+                      <CardTitle className="text-xl font-bold tracking-tight text-foreground">
+                        {cat.name}
+                      </CardTitle>
+                      <CardDescription className="text-sm line-clamp-2 leading-relaxed">
+                        {cat.description || "General municipal maintenance and service request category."}
+                      </CardDescription>
+                    </CardHeader>
 
-                <CardContent className="pt-2">
-                  <div className="flex items-center justify-between text-xs py-2 px-3 rounded-lg bg-muted/40">
-                    <span className="text-muted-foreground">Service Fee</span>
-                    <span className="font-semibold text-foreground">
-                      {isPaid ? `$${cat.basePrice}` : "Free / Standard"}
-                    </span>
-                  </div>
-                </CardContent>
+                    <CardContent className="pt-2">
+                      <div className="flex items-center justify-between text-xs py-2.5 px-3 rounded-xl bg-muted/40 border border-border/50">
+                        <span className="text-muted-foreground font-medium">Service Fee</span>
+                        <span className="font-bold text-foreground">
+                          {isPaid ? `$${cat.basePrice}` : "Free / Standard"}
+                        </span>
+                      </div>
+                    </CardContent>
 
-                <CardFooter className="pt-2 border-t">
-                  <Link
-                    href={`/login?next=/dashboard/complaints/new`}
-                    className={`${buttonVariants({ variant: "default", size: "sm" })} w-full justify-center gap-1.5 cursor-pointer`}
-                  >
-                    <span>Report This Problem</span>
-                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                </CardFooter>
-              </Card>
-            );
-          })}
-        </div>
+                    <CardFooter className="pt-2 border-t">
+                      <Link
+                        href={`/login?next=/dashboard/complaints/new`}
+                        className={`${buttonVariants({ variant: "default", size: "sm" })} w-full justify-center gap-1.5 cursor-pointer shadow-xs hover:scale-[1.01] active:scale-[0.99] transition-transform`}
+                      >
+                        <span>Report This Problem</span>
+                        <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                      </Link>
+                    </CardFooter>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </motion.div>
       )}
     </div>
   );
