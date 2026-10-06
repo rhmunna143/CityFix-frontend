@@ -15,6 +15,7 @@ interface AuthContextType {
   role: Role | null;
   isLoading: boolean;
   login: (credentials: any) => Promise<void>;
+  googleLogin: (idToken: string) => Promise<void>;
   demoLogin: (role: Role) => Promise<void>;
   logout: () => Promise<void>;
   fetchUser: () => Promise<void>;
@@ -91,6 +92,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const googleLogin = async (idToken: string) => {
+    const res = await fetch("/api/auth/google", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      await fetchUser();
+      const searchParams = new URLSearchParams(window.location.search);
+      const next = searchParams.get("next");
+      router.push(next || getRoleHome(data.data.user.role));
+    } else {
+      throw new Error(data.message || "Google login failed");
+    }
+  };
+
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     setUser(null);
@@ -100,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, role, isLoading, login, demoLogin, logout, fetchUser }}
+      value={{ user, role, isLoading, login, googleLogin, demoLogin, logout, fetchUser }}
     >
       {children}
     </AuthContext.Provider>

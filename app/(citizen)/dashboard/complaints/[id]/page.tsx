@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchComplaintById, submitFeedback, reopenComplaint } from "@/lib/api/complaints";
-import { useParams } from "next/navigation";
+import { fetchComplaintById, submitFeedback, reopenComplaint, deleteComplaint } from "@/lib/api/complaints";
+import { useParams, useRouter } from "next/navigation";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { SkeletonDetail } from "@/components/shared/Skeletons";
@@ -12,13 +12,14 @@ import { initiatePayment } from "@/lib/api/payments";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Zap, CreditCard, Loader2, Star, RefreshCw } from "lucide-react";
+import { Zap, CreditCard, Loader2, Star, RefreshCw, Trash2 } from "lucide-react";
 import { PaymentPurpose } from "@/types/api";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 export default function ComplaintDetail() {
   const { id } = useParams() as { id: string };
+  const router = useRouter();
   const queryClient = useQueryClient();
   
   const { data: complaint, isLoading, error } = useQuery({
@@ -30,6 +31,17 @@ export default function ComplaintDetail() {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteComplaint(id),
+    onSuccess: () => {
+      toast.success("Complaint cancelled and deleted");
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
+      queryClient.invalidateQueries({ queryKey: ["citizen-stats"] });
+      router.push("/dashboard");
+    },
+    onError: (err: any) => toast.error(err.message || "Failed to delete complaint"),
+  });
 
   const reopenMutation = useMutation({
     mutationFn: () => reopenComplaint(id),
@@ -70,6 +82,24 @@ export default function ComplaintDetail() {
       <PageHeader 
         title={complaint.title} 
         description={`Ref: ${complaint.referenceCode} - Reported on ${format(new Date(complaint.createdAt), "PP")}`}
+        action={
+          complaint.status === "SUBMITTED" ? (
+            <Button
+              variant="destructive"
+              size="sm"
+              className="cursor-pointer"
+              onClick={() => {
+                if (window.confirm("Are you sure you want to cancel and delete this complaint?")) {
+                  deleteMutation.mutate();
+                }
+              }}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+              Delete Complaint
+            </Button>
+          ) : undefined
+        }
       />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
@@ -79,8 +109,27 @@ export default function ComplaintDetail() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p>{complaint.description}</p>
+              
+              {complaint.attachments && complaint.attachments.length > 0 && (
+                <div className="pt-4 border-t space-y-2">
+                  <h4 className="font-semibold text-sm mb-2">Attachments</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {complaint.attachments.map((attachment) => (
+                      <div key={attachment.id} className="relative aspect-square rounded-md overflow-hidden border">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img 
+                          src={attachment.url} 
+                          alt="Complaint attachment" 
+                          className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="pt-4 border-t">
-                <h4 className="font-semibold mb-2">Location</h4>
+                <h4 className="font-semibold text-sm mb-2">Location</h4>
                 <p className="text-muted-foreground">{complaint.address}</p>
               </div>
             </CardContent>
@@ -141,17 +190,26 @@ export default function ComplaintDetail() {
                 </div>
               )}
             </CardContent>
-            {(complaint.status !== "CLOSED" && complaint.status !== "RESOLVED") && (
+            {(complaint.status !== "CLOSED" && complaint.status !== "RESOLVED") && (() => {
+              const hasPaidServiceCharge = complaint.payments?.some(p => p.purpose === "SERVICE_CHARGE" && p.status === "SUCCEEDED");
+              return (
               <CardFooter className="flex flex-col gap-2 border-t pt-4">
                 {complaint.category?.basePrice && complaint.status === "SUBMITTED" && (
-                  <Button 
-                    className="w-full" 
-                    onClick={() => handlePayment("SERVICE_CHARGE")}
-                    disabled={paymentLoading !== null}
-                  >
-                    {paymentLoading === "SERVICE_CHARGE" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CreditCard className="mr-2 h-4 w-4" />}
-                    Pay Service Charge (${parseFloat(complaint.category.basePrice).toFixed(2)})
-                  </Button>
+                  hasPaidServiceCharge ? (
+                    <div className="w-full p-3 bg-green-50 text-green-900 border border-green-200 rounded-md flex items-center justify-center gap-2 text-sm font-medium">
+                      <CreditCard className="h-4 w-4 text-green-600" />
+                      Service Charge Paid
+                    </div>
+                  ) : (
+                    <Button 
+                      className="w-full" 
+                      onClick={() => handlePayment("SERVICE_CHARGE")}
+                      disabled={paymentLoading !== null}
+                    >
+                      {paymentLoading === "SERVICE_CHARGE" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CreditCard className="mr-2 h-4 w-4" />}
+                      Pay Service Charge (${parseFloat(complaint.category.basePrice).toFixed(2)})
+                    </Button>
+                  )
                 )}
                 {!complaint.isPriority && (
                   <Button 
@@ -165,7 +223,8 @@ export default function ComplaintDetail() {
                   </Button>
                 )}
               </CardFooter>
-            )}
+              )
+            })()}
           </Card>
 
           {complaint.status === "RESOLVED" && complaint.reopenCount < 1 && (

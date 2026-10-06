@@ -43,6 +43,12 @@ export interface User {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+  staffProfile?: {
+    id: string;
+    departmentId: string;
+    employeeCode: string;
+    isDepartmentLead?: boolean;
+  } | null;
 }
 
 export interface Category {
@@ -52,12 +58,17 @@ export interface Category {
   slaHours?: number;
   basePrice?: string; // Decimal as string
   departmentId?: string;
+  department?: Department;
+  isActive?: boolean;
+  deletedAt?: string | null;
 }
 
 export interface Department {
   id: string;
   name: string;
   description?: string;
+  isActive?: boolean;
+  deletedAt?: string | null;
 }
 
 export interface Complaint {
@@ -89,6 +100,13 @@ export interface Complaint {
     id: string;
     name: string;
   };
+  attachments?: {
+    id: string;
+    url: string;
+    fileType: string;
+    stage: string;
+  }[];
+  payments?: Payment[];
 }
 
 export interface Payment {

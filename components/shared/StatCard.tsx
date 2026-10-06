@@ -6,11 +6,16 @@ interface StatCardProps {
   value: string | number;
   description?: string;
   icon?: ReactNode;
+  className?: string;
+  onClick?: () => void;
 }
 
-export function StatCard({ title, value, description, icon }: StatCardProps) {
+export function StatCard({ title, value, description, icon, className, onClick }: StatCardProps) {
   return (
-    <Card>
+    <Card 
+      onClick={onClick} 
+      className={`${onClick ? 'cursor-pointer hover:border-primary/50 hover:shadow-sm transition-all' : ''} ${className || ''}`}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {icon && <div className="text-muted-foreground">{icon}</div>}

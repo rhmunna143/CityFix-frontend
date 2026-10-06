@@ -8,6 +8,7 @@ import { Pagination } from "@/components/shared/Pagination";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { Payment } from "@/types/api";
 
 export default function PaymentsPage() {
   const { searchParams, getPage, updateUrl } = useUrlState();
@@ -18,19 +19,18 @@ export default function PaymentsPage() {
   });
 
   const columns = [
-    { key: "id", header: "Transaction ID", render: (p: any) => <span className="font-mono text-xs">{p.id.split("-")[0]}</span> },
-    { key: "purpose", header: "Purpose", render: (p: any) => p.purpose.replace("_", " ") },
-    { key: "amount", header: "Amount", render: (p: any) => `$${parseFloat(p.amount).toFixed(2)}` },
+    { header: "Transaction ID", cell: (p: Payment) => <span className="font-mono text-xs">{p.id.split("-")[0]}</span> },
+    { header: "Purpose", cell: (p: Payment) => p.purpose.replace("_", " ") },
+    { header: "Amount", cell: (p: Payment) => `$${parseFloat(p.amount).toFixed(2)}` },
     { 
-      key: "status", 
       header: "Status", 
-      render: (p: any) => (
-        <Badge variant={p.status === "SUCCESS" ? "default" : p.status === "FAILED" || p.status === "CANCELLED" ? "destructive" : "secondary"}>
+      cell: (p: Payment) => (
+        <Badge variant={p.status === "SUCCEEDED" ? "default" : p.status === "FAILED" || p.status === "REFUNDED" ? "destructive" : "secondary"}>
           {p.status}
         </Badge>
       )
     },
-    { key: "createdAt", header: "Date", render: (p: any) => format(new Date(p.createdAt), "MMM d, yyyy") },
+    { header: "Date", cell: (p: Payment) => format(new Date(p.createdAt), "MMM d, yyyy") },
   ];
 
   return (

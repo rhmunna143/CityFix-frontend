@@ -9,9 +9,30 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Role } from "@/types/api";
 
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+
+function ArrowLeftIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m12 19-7-7 7-7" />
+      <path d="M19 12H5" />
+    </svg>
+  );
+}
+
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -45,8 +66,19 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-muted/20 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
+      <Card className="w-full max-w-md relative">
+        <div className="absolute left-4 top-4 z-10">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 h-8 px-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors cursor-pointer"
+            title="Back to Home"
+            aria-label="Back to Home"
+          >
+            <ArrowLeftIcon className="h-4 w-4" />
+            <span>Back</span>
+          </Link>
+        </div>
+        <CardHeader className="space-y-1 text-center pt-8 sm:pt-6">
           <CardTitle className="text-2xl font-bold tracking-tight text-primary">CityFix</CardTitle>
           <CardDescription>Enter your email and password to log in</CardDescription>
         </CardHeader>
@@ -63,13 +95,24 @@ export default function LoginPage() {
               </div>
               <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full cursor-pointer" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Log In
             </Button>
           </form>
 
-          <div className="relative my-6">
+          <div className="relative my-5">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+
+          <GoogleSignInButton text="continue_with" />
+
+          <div className="relative my-5">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
             </div>
@@ -79,15 +122,15 @@ export default function LoginPage() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <Button variant="outline" onClick={() => handleDemo("CITIZEN")} disabled={demoLoading !== null}>
+            <Button variant="outline" className="cursor-pointer" onClick={() => handleDemo("CITIZEN")} disabled={demoLoading !== null}>
               {demoLoading === "CITIZEN" && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Demo Citizen
             </Button>
-            <Button variant="outline" onClick={() => handleDemo("STAFF")} disabled={demoLoading !== null}>
+            <Button variant="outline" className="cursor-pointer" onClick={() => handleDemo("STAFF")} disabled={demoLoading !== null}>
               {demoLoading === "STAFF" && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Demo Staff
             </Button>
-            <Button variant="outline" onClick={() => handleDemo("ADMIN")} disabled={demoLoading !== null}>
+            <Button variant="outline" className="cursor-pointer" onClick={() => handleDemo("ADMIN")} disabled={demoLoading !== null}>
               {demoLoading === "ADMIN" && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Demo Admin
             </Button>

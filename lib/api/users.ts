@@ -19,7 +19,7 @@ export async function uploadAvatar(file: File): Promise<{ url: string }> {
     formData.append("file", file);
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", `/api/proxy/users/me/avatar`, true);
+    xhr.open("PATCH", `/api/proxy/users/me/avatar`, true);
 
     xhr.onload = () => {
       if (xhr.status >= 200 && xhr.status < 300) {

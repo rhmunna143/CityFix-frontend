@@ -4,7 +4,7 @@ export interface Notification {
   id: string;
   userId: string;
   title: string;
-  message: string;
+  body: string;
   type: string;
   isRead: boolean;
   createdAt: string;
