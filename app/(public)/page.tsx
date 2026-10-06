@@ -3,6 +3,7 @@ import {
   HomeHero,
   HomeStatsStrip,
   LiveMunicipalPulse,
+  CinematicMunicipalShowcase,
   HowItWorksSection,
   InteractiveProblemSimulator,
   BeforeAfterShowcase,
@@ -63,6 +64,7 @@ export default async function HomePage() {
       <HomeHero />
       <HomeStatsStrip totalResolved={totalResolved} avgHours={avgHours} />
       <LiveMunicipalPulse />
+      <CinematicMunicipalShowcase />
       <HowItWorksSection />
       <InteractiveProblemSimulator />
       <BeforeAfterShowcase />
