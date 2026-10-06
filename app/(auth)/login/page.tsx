@@ -78,10 +78,12 @@ export default function LoginPage() {
             <span>Back</span>
           </Link>
         </div>
+
         <CardHeader className="space-y-1 text-center pt-8 sm:pt-6">
           <CardTitle className="text-2xl font-bold tracking-tight text-primary">CityFix</CardTitle>
           <CardDescription>Enter your email and password to log in</CardDescription>
         </CardHeader>
+        
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">

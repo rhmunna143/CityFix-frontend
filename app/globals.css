@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 .montecarlo-regular {
-  font-family: "MonteCarlo", cursive;
+  font-family: var(--font-montecarlo), "MonteCarlo", cursive;
   font-weight: 400;
   font-style: normal;
 }

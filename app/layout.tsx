@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/components/providers";
 
 const inter = Inter({ subsets: ["latin"] });
+const monteCarlo = localFont({
+  src: "./fonts/MonteCarlo-Regular.woff2",
+  variable: "--font-montecarlo",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "CityFix - City Complaint & Service Platform",
@@ -28,15 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className={`${inter.className} min-h-full flex flex-col antialiased`} suppressHydrationWarning>
+      <body className={`${inter.className} ${monteCarlo.variable} min-h-full flex flex-col antialiased`} suppressHydrationWarning>
         <Providers>
           {children}
           <Toaster position="top-right" richColors />

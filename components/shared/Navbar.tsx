@@ -41,9 +41,10 @@ export function Navbar() {
               <Image src={"/mango.png"} width={"60"} height={"60"} alt="logo" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold montecarlo-regular text-xl tracking-tight text-foreground group-hover:text-primary transition-colors">
+              <span className="font-bold montecarlo-regular text-3xl tracking-tight text-foreground group-hover:text-primary transition-colors">
                 CityFix
               </span>
+
               <span className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground -mt-1">
                 Civic Action
               </span>
