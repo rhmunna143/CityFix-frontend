@@ -4,7 +4,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -13,6 +20,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import Image from "next/image";
 
 function ArrowLeftIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
@@ -43,7 +51,11 @@ type RegisterForm = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm<RegisterForm>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
   });
 
@@ -83,33 +95,66 @@ export default function RegisterPage() {
             <span>Back</span>
           </Link>
         </div>
+
         <CardHeader className="space-y-1 text-center pt-8 sm:pt-6">
-          <CardTitle className="text-2xl font-bold tracking-tight text-primary">Create an account</CardTitle>
-          <CardDescription>Enter your details to create your CityFix account</CardDescription>
+          <div className="logo flex justify-center items-center gap-2">
+            <div className="h-14 w-14 p-1 bg-white rounded-xl flex items-center justify-center text-primary-foreground font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
+              <Image src={"/mango.png"} width={"60"} height={"60"} alt="logo" />
+            </div>
+
+            <CardTitle className="text-4xl font-bold tracking-tight text-primary montecarlo-regular">
+              CityFix
+            </CardTitle>
+          </div>
+
+          <CardDescription>
+            Enter your details to create your CityFix account
+          </CardDescription>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <Input id="name" {...register("name")} />
-              {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+              {errors.name && (
+                <p className="text-xs text-destructive">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" type="email" {...register("email")} />
-              {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="text-xs text-destructive">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Phone Number</Label>
               <Input id="phone" type="tel" {...register("phone")} />
-              {errors.phone && <p className="text-xs text-destructive">{errors.phone.message}</p>}
+              {errors.phone && (
+                <p className="text-xs text-destructive">
+                  {errors.phone.message}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" {...register("password")} />
-              {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="text-xs text-destructive">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
-            <Button type="submit" className="w-full cursor-pointer" disabled={isLoading}>
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={isLoading}
+            >
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Register
             </Button>
@@ -120,7 +165,9 @@ export default function RegisterPage() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">Or sign up with</span>
+              <span className="bg-card px-2 text-muted-foreground">
+                Or sign up with
+              </span>
             </div>
           </div>
 
@@ -128,7 +175,10 @@ export default function RegisterPage() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4 text-center text-sm text-muted-foreground mt-2">
           <div>
-            Already have an account? <Link href="/login" className="text-primary hover:underline">Log In</Link>
+            Already have an account?{" "}
+            <Link href="/login" className="text-primary hover:underline">
+              Log In
+            </Link>
           </div>
         </CardFooter>
       </Card>

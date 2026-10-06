@@ -1,14 +1,16 @@
 "use client";
 
-import { ReactNode } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth/AuthContext';
-import { Button } from '@/components/ui/button';
-import { LogOut, Bell, ArrowLeft } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { getNotifications } from '@/lib/api/notifications';
-import { ThemeToggle } from '@/components/shared/ThemeToggle';
+import { ReactNode } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth/AuthContext";
+import { Button } from "@/components/ui/button";
+import { LogOut, Bell, ArrowLeft } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getNotifications } from "@/lib/api/notifications";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
+import Image from "next/image";
+import { CardTitle } from "../ui/card";
 
 interface NavItem {
   title: string;
@@ -24,20 +26,30 @@ interface DashboardShellProps {
 export function DashboardShell({ children, navItems }: DashboardShellProps) {
   const router = useRouter();
   const { user, logout } = useAuth();
-  
+
   const { data: notificationsData } = useQuery({
-    queryKey: ['notifications-bell'],
-    queryFn: () => getNotifications({ limit: '50' }),
+    queryKey: ["notifications-bell"],
+    queryFn: () => getNotifications({ limit: "50" }),
     refetchInterval: 15000,
-    enabled: !!user && user.role !== 'SUPER_ADMIN',
+    enabled: !!user && user.role !== "SUPER_ADMIN",
   });
-  
-  const unreadCount = notificationsData?.items.filter(n => !n.isRead).length || 0;
+
+  const unreadCount =
+    notificationsData?.items.filter((n) => !n.isRead).length || 0;
 
   return (
     <div className="flex min-h-screen bg-muted/40 w-full">
       <aside className="hidden md:flex w-64 flex-col bg-background border-r p-4">
-        <div className="font-bold text-xl mb-6 px-2">CityFix</div>
+        <Link href="/" className="logo flex justify-center items-center gap-2">
+          <div className="h-14 w-14 p-1 bg-white rounded-xl flex items-center justify-center text-primary-foreground font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
+            <Image src={"/mango.png"} width={"60"} height={"60"} alt="logo" />
+          </div>
+
+          <CardTitle className="text-4xl font-bold tracking-tight montecarlo-regular">
+            CityFix
+          </CardTitle>
+        </Link>
+
         <nav className="flex flex-col gap-2">
           {navItems.map((item) => (
             <Link
@@ -51,6 +63,7 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
           ))}
         </nav>
       </aside>
+
       <div className="flex flex-col flex-1 min-w-0">
         <header className="h-14 lg:h-16 flex items-center justify-between border-b bg-background px-4 md:px-8">
           <div className="flex items-center gap-2">
@@ -68,9 +81,22 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
           </div>
           <div className="ml-auto flex items-center gap-3">
             <ThemeToggle />
-            {user?.role !== 'SUPER_ADMIN' && (
-              <Link href={user?.role === 'CITIZEN' ? '/dashboard/notifications' : user?.role === 'STAFF' ? '/staff/notifications' : '/admin/notifications'} className="relative mr-1">
-                <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground cursor-pointer">
+            {user?.role !== "SUPER_ADMIN" && (
+              <Link
+                href={
+                  user?.role === "CITIZEN"
+                    ? "/dashboard/notifications"
+                    : user?.role === "STAFF"
+                      ? "/staff/notifications"
+                      : "/admin/notifications"
+                }
+                className="relative mr-1"
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative text-muted-foreground hover:text-foreground cursor-pointer"
+                >
                   <Bell className="h-5 w-5" />
                   {unreadCount > 0 && (
                     <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive border-2 border-background"></span>
@@ -81,35 +107,44 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
             {user && (
               <Link
                 href={
-                  user.role === 'ADMIN' || user.role === 'SUPER_ADMIN'
-                    ? '/admin/profile'
-                    : user.role === 'STAFF'
-                      ? '/staff/profile'
-                      : '/dashboard/profile'
+                  user.role === "ADMIN" || user.role === "SUPER_ADMIN"
+                    ? "/admin/profile"
+                    : user.role === "STAFF"
+                      ? "/staff/profile"
+                      : "/dashboard/profile"
                 }
                 className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-accent text-foreground transition-colors cursor-pointer"
                 title="View Profile"
               >
                 <div className="h-7 w-7 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-xs font-semibold text-primary overflow-hidden shrink-0">
                   {user.avatarUrl ? (
-                    <img src={user.avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+                    <img
+                      src={user.avatarUrl}
+                      alt="Avatar"
+                      className="h-full w-full object-cover"
+                    />
                   ) : (
-                    <span>{user.name?.charAt(0) || 'U'}</span>
+                    <span>{user.name?.charAt(0) || "U"}</span>
                   )}
                 </div>
-                <span className="text-sm font-medium hidden sm:inline-block">{user.name}</span>
+                <span className="text-sm font-medium hidden sm:inline-block">
+                  {user.name}
+                </span>
               </Link>
             )}
-            <Button variant="ghost" size="sm" onClick={() => logout()} className="cursor-pointer">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => logout()}
+              className="cursor-pointer"
+            >
               <LogOut className="h-4 w-4 mr-2 hidden sm:inline-block" />
               <span className="hidden sm:inline-block">Logout</span>
               <LogOut className="h-4 w-4 sm:hidden" />
             </Button>
           </div>
         </header>
-        <main className="flex-1 p-4 md:p-8 overflow-auto">
-          {children}
-        </main>
+        <main className="flex-1 p-4 md:p-8 overflow-auto">{children}</main>
       </div>
     </div>
   );
