@@ -680,13 +680,14 @@ export function CinematicMunicipalShowcase() {
 
       <div className="max-w-7xl mx-auto space-y-12 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4">
+        <div className="text-center max-w-7xl mx-auto space-y-4">
           <FadeIn direction="down" duration={0.4}>
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-xs">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </span>
+
               <span>24/7 Autoplay Civic Stream • Live Municipal Watchdog</span>
             </div>
           </FadeIn>
@@ -694,7 +695,7 @@ export function CinematicMunicipalShowcase() {
           <FadeIn delay={0.1} duration={0.5}>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-foreground leading-[1.15]">
               Witness Modern Civic Infrastructure In{" "}
-              <span className="bg-gradient-to-r from-primary via-blue-500 to-emerald-500 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-primary via-blue-500 to-emerald-500 bg-clip-text text-transparent">
                 Real-Time Motion.
               </span>
             </h2>
@@ -894,7 +895,9 @@ export function CinematicMunicipalShowcase() {
             </div>
           </FadeIn>
         </div>
+      </div>
 
+      <div className="stage-items mt-22">
         {/* 3 Modern Feature Cards: Why Video-First Municipal Transparency Matters */}
         <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto pt-4">
           <StaggerItem>
@@ -904,9 +907,11 @@ export function CinematicMunicipalShowcase() {
                   <div className="h-10 w-10 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                     <Radio className="h-5 w-5" />
                   </div>
+
                   <h4 className="font-bold text-foreground text-base tracking-tight">
                     AI Automated Detection
                   </h4>
+
                   <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                     Integrated civic camera telemetry and high-resolution drone
                     scans detect road cracks, potholes, and illegal dumping
