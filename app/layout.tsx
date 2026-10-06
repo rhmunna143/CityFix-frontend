@@ -11,13 +11,13 @@ export const metadata: Metadata = {
   description: "Report municipal problems, track status, and get things fixed.",
   icons: {
     icon: [
-      { url: "/logo.png", type: "image/png" },
+      { url: "/mango.png", type: "image/png" },
       { url: "/icon.png", type: "image/png" },
     ],
     apple: [
-      { url: "/logo.png", type: "image/png" },
+      { url: "/mango.png", type: "image/png" },
     ],
-    shortcut: "/logo.png",
+    shortcut: "/mango.png",
   },
 };
 
@@ -28,6 +28,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className={`${inter.className} min-h-full flex flex-col antialiased`} suppressHydrationWarning>
         <Providers>
           {children}
