@@ -1235,10 +1235,14 @@ export function HowItWorksSection() {
   );
 }
 
-// 5. NEW SECTION: BEFORE & AFTER RESOLUTION SHOWCASE
+// 5. NEW SECTION: BEFORE & AFTER RESOLUTION SHOWCASE (NESTED SLIDER)
 export function BeforeAfterShowcase() {
-  const [activeTab, setActiveTab] = useState<"before" | "after">("after");
-  const [selectedCase, setSelectedCase] = useState(0);
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [nestedDirection, setNestedDirection] = useState(1);
+
+  const caseTabsContainerRef = useRef<HTMLDivElement>(null);
+  const caseTabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const cases = [
     {
@@ -1316,13 +1320,114 @@ export function BeforeAfterShowcase() {
         stamp: "FLOW RESTORED 100%",
       },
     },
+    {
+      title: "Storm-Damaged Overhead Tree Limb & Power Line",
+      location: "Green Avenue & Sector 7 Power Corridor",
+      department: "Restoration & Safety",
+      resolvedTime: "2.5 Hours",
+      rating: "5.0 ★★★★★",
+      before: {
+        condition:
+          "Severe branch fracture suspended over active electrical cables and two-lane thoroughfare.",
+        status: "Immediate Hazard",
+        label: "Before CityFix Intervention",
+        image:
+          "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",
+        stamp: "ELECTRICAL HAZARD LOGGED",
+      },
+      after: {
+        condition:
+          "Boom crane & certified arborists safely removed hanging limb; power lines cleared and road reopened.",
+        status: "Hazard Neutralized",
+        label: "After Municipal Completion",
+        image:
+          "https://i.ibb.co.com/0p4kmwz9/mario-spencer-Uyqxl-MS8-X84-unsplash.jpg",
+        stamp: "POWER CORRIDOR SECURED",
+      },
+    },
   ];
 
+  const totalSlides = cases.length * 2; // 8 total steps: 4 cases x 2 phases
+  const selectedCase = Math.floor(slideIndex / 2);
+  const activeTab: "before" | "after" = slideIndex % 2 === 0 ? "before" : "after";
+
+  // Auto-advance nested slider: guarantees sequential cycling across all 4 cases & both phases
+  useEffect(() => {
+    if (isPaused) return;
+
+    const timer = setInterval(() => {
+      setNestedDirection(1);
+      setSlideIndex((prev) => (prev + 1) % totalSlides);
+    }, 4500);
+
+    return () => clearInterval(timer);
+  }, [isPaused, totalSlides]);
+
+  // Keep active parent case tab centered in horizontal container without scrolling window
+  useEffect(() => {
+    const container = caseTabsContainerRef.current;
+    const tab = caseTabRefs.current[selectedCase];
+    if (container && tab && container.scrollWidth > container.clientWidth) {
+      const scrollLeft =
+        tab.offsetLeft - container.clientWidth / 2 + tab.clientWidth / 2;
+      container.scrollTo({
+        left: Math.max(0, scrollLeft),
+        behavior: "smooth",
+      });
+    }
+  }, [selectedCase]);
+
+  const handleSelectCase = (idx: number) => {
+    setNestedDirection(1);
+    setSlideIndex(idx * 2);
+  };
+
+  const handleSelectTab = (tab: "before" | "after") => {
+    if (tab === activeTab) return;
+    setNestedDirection(tab === "after" ? 1 : -1);
+    setSlideIndex(selectedCase * 2 + (tab === "after" ? 1 : 0));
+  };
+
   const current = cases[selectedCase];
+  const currentContent = activeTab === "before" ? current.before : current.after;
+
+  // Smooth directional slide variants for nested Before / After comparisons
+  const nestedSlideVariants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? 32 : -32,
+      opacity: 0,
+      scale: 0.98,
+      filter: "blur(2px)",
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      filter: "blur(0px)",
+      transition: {
+        x: { type: "spring" as const, stiffness: 320, damping: 28 },
+        opacity: { duration: 0.35, ease: "easeOut" as const },
+        scale: { duration: 0.35, ease: "easeOut" as const },
+        filter: { duration: 0.25 },
+      },
+    },
+    exit: (dir: number) => ({
+      x: dir > 0 ? -32 : 32,
+      opacity: 0,
+      scale: 0.98,
+      filter: "blur(2px)",
+      transition: {
+        x: { type: "spring" as const, stiffness: 320, damping: 28 },
+        opacity: { duration: 0.25, ease: "easeIn" as const },
+        scale: { duration: 0.25, ease: "easeIn" as const },
+        filter: { duration: 0.2 },
+      },
+    }),
+  };
 
   return (
     <section className="py-16 md:py-24 bg-muted/20 border-y px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-12">
+      <div className="max-w-7xl mx-auto space-y-10">
         <FadeIn className="text-center space-y-3 max-w-2xl mx-auto">
           <h2 className="text-xs font-semibold text-primary uppercase tracking-widest">
             Measurable Civic Impact
@@ -1331,34 +1436,72 @@ export function BeforeAfterShowcase() {
             Before & After Field Resolutions
           </p>
           <p className="text-muted-foreground text-sm sm:text-base">
-            Every ticket requires photo proof and supervisor inspection before
-            being marked resolved.
+            Every ticket requires photographic proof and supervisor inspection before
+            being marked resolved. Watch real municipal cases cycle automatically.
           </p>
         </FadeIn>
 
-        {/* Case Selector Pills */}
-        <div className="flex justify-center items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-          {cases.map((c, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => setSelectedCase(idx)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                selectedCase === idx
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "bg-card border border-border text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Case #{idx + 1}: {c.department.split("&")[0]}
-            </button>
-          ))}
+        {/* Parent Case Selector Tabs */}
+        <div className="flex items-center justify-center gap-2 mx-auto px-2">
+          <div
+            ref={caseTabsContainerRef}
+            className="relative flex items-center gap-2 overflow-x-auto py-1 px-1 scrollbar-none max-w-full"
+          >
+            {cases.map((c, idx) => {
+              const isSelected = selectedCase === idx;
+              return (
+                <button
+                  key={idx}
+                  ref={(el) => {
+                    caseTabRefs.current[idx] = el;
+                  }}
+                  type="button"
+                  onClick={() => handleSelectCase(idx)}
+                  className={`relative px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap overflow-hidden shrink-0 ${
+                    isSelected
+                      ? "text-primary-foreground font-bold shadow-md scale-[1.02]"
+                      : "bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                  }`}
+                >
+                  {/* Sliding animated background pill */}
+                  {isSelected && (
+                    <motion.div
+                      layoutId="activeCivicCasePill"
+                      className="absolute inset-0 bg-primary z-0 rounded-xl"
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+
+                  <span className="relative z-10 flex items-center gap-1.5">
+                    <span>Case #{idx + 1}: {c.department.split("&")[0]}</span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Interactive Comparison Card with Photographic Evidence */}
+        {/* Interactive Comparison Card with Nested Slider */}
         <FadeIn delay={0.1}>
-          <div className="max-w-4xl mx-auto rounded-3xl border bg-card/90 backdrop-blur-md p-6 sm:p-10 shadow-lg space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
-              <div>
+          <div
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            onTouchStart={() => setIsPaused(true)}
+            onTouchEnd={() => setIsPaused(false)}
+            className="max-w-4xl mx-auto rounded-3xl border bg-card/90 backdrop-blur-md p-6 sm:p-10 shadow-lg space-y-6 relative group"
+          >
+            {/* Header: Case Title, Location, and Nested Before/After Toggle Controls */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[11px] font-semibold">
+                    {current.department}
+                  </span>
+                </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-foreground">
                   {current.title}
                 </h3>
@@ -1368,148 +1511,178 @@ export function BeforeAfterShowcase() {
                 />
               </div>
 
-              {/* Before / After Toggle Buttons */}
-              <div className="flex items-center gap-1 bg-muted p-1 rounded-xl self-start sm:self-auto">
+              {/* Nested Before / After Slider Toggle Buttons with Live Progress Bar */}
+              <div className="flex items-center gap-1.5 bg-muted/80 p-1 rounded-xl self-start sm:self-auto border border-border/50 shrink-0">
+                {/* Before Defect Tab */}
                 <button
                   type="button"
-                  onClick={() => setActiveTab("before")}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  onClick={() => handleSelectTab("before")}
+                  className={`relative px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 overflow-hidden ${
                     activeTab === "before"
-                      ? "bg-destructive text-destructive-foreground shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "text-destructive-foreground font-bold shadow-xs"
+                      : "text-muted-foreground hover:text-foreground hover:bg-card/50"
                   }`}
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-                  Before Defect
+                  {activeTab === "before" && (
+                    <motion.div
+                      layoutId="activeCivicNestedTab"
+                      className="absolute inset-0 bg-destructive z-0 rounded-lg"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+
+                  {/* Progress Line */}
+                  {activeTab === "before" && (
+                    <motion.div
+                      key={`civic-tab-progress-before-${slideIndex}-${isPaused}`}
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{
+                        duration: isPaused ? 0 : 4.5,
+                        ease: "linear",
+                      }}
+                      className="absolute bottom-0 left-0 h-0.5 bg-white/80 z-10"
+                    />
+                  )}
+
+                  <span className="relative z-10 flex items-center gap-1.5">
+                    <span className={`h-1.5 w-1.5 rounded-full ${
+                      activeTab === "before" ? "bg-white animate-pulse" : "bg-destructive"
+                    }`} />
+                    Before Defect
+                  </span>
                 </button>
+
+                {/* After Resolution Tab */}
                 <button
                   type="button"
-                  onClick={() => setActiveTab("after")}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  onClick={() => handleSelectTab("after")}
+                  className={`relative px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 overflow-hidden ${
                     activeTab === "after"
-                      ? "bg-emerald-600 text-white shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "text-white font-bold shadow-xs"
+                      : "text-muted-foreground hover:text-foreground hover:bg-card/50"
                   }`}
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-200" />
-                  After Resolution
+                  {activeTab === "after" && (
+                    <motion.div
+                      layoutId="activeCivicNestedTab"
+                      className="absolute inset-0 bg-emerald-600 z-0 rounded-lg"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+
+                  {/* Progress Line */}
+                  {activeTab === "after" && (
+                    <motion.div
+                      key={`civic-tab-progress-after-${slideIndex}-${isPaused}`}
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{
+                        duration: isPaused ? 0 : 4.5,
+                        ease: "linear",
+                      }}
+                      className="absolute bottom-0 left-0 h-0.5 bg-emerald-200 z-10"
+                    />
+                  )}
+
+                  <span className="relative z-10 flex items-center gap-1.5">
+                    <span className={`h-1.5 w-1.5 rounded-full ${
+                      activeTab === "after" ? "bg-emerald-200" : "bg-emerald-600"
+                    }`} />
+                    After Resolution
+                  </span>
                 </button>
               </div>
             </div>
 
-            {/* Condition Content with Smooth Animation & Image Showcase */}
-            <AnimatePresence mode="wait">
-              {activeTab === "before" ? (
-                <motion.div
-                  key="before"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  transition={{ duration: 0.25 }}
-                  className="rounded-2xl border border-destructive/30 bg-destructive/5 overflow-hidden"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-2">
-                    {/* Photographic Proof Image */}
-                    <div className="relative h-56 md:h-full min-h-[220px] w-full">
-                      <Image
-                        src={current.before.image}
-                        alt={current.before.label}
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
-                      <div className="absolute top-3 left-3">
-                        <span className="px-2.5 py-1 rounded-md bg-destructive text-destructive-foreground text-[10px] font-mono font-bold tracking-wider">
-                          {current.before.stamp}
-                        </span>
-                      </div>
-                      <div className="absolute bottom-3 left-3 text-[11px] text-white/90 font-mono">
-                        Initial Citizen GPS Evidence
-                      </div>
+            {/* Condition Content with Directional Nested Slide Animation */}
+            <AnimatePresence mode="wait" custom={nestedDirection}>
+              <motion.div
+                key={`nested-${selectedCase}-${activeTab}`}
+                custom={nestedDirection}
+                variants={nestedSlideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                className={`rounded-2xl border overflow-hidden transition-colors ${
+                  activeTab === "before"
+                    ? "border-destructive/30 bg-destructive/5"
+                    : "border-emerald-500/40 bg-emerald-500/5"
+                }`}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2">
+                  {/* Photographic Proof Image */}
+                  <div className="relative h-64 md:h-full min-h-[250px] w-full overflow-hidden group/img">
+                    <Image
+                      src={currentContent.image}
+                      alt={currentContent.label}
+                      fill
+                      className="object-cover transition-transform duration-700 ease-out group-hover/img:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
+
+                    {/* Stamp Badge */}
+                    <div className="absolute top-3 left-3 z-10">
+                      <span className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-wider shadow-sm ${
+                        activeTab === "before"
+                          ? "bg-destructive text-destructive-foreground"
+                          : "bg-emerald-600 text-white"
+                      }`}>
+                        {currentContent.stamp}
+                      </span>
                     </div>
 
-                    {/* Condition Details */}
-                    <div className="p-6 space-y-4 flex flex-col justify-between">
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="font-bold text-destructive flex items-center gap-1.5">
-                            <span className="h-2 w-2 rounded-full bg-destructive" />
-                            {current.before.label}
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-[11px] font-semibold">
-                            {current.before.status}
-                          </span>
-                        </div>
-                        <p className="text-sm sm:text-base text-foreground/90 leading-relaxed font-medium">
-                          &ldquo;{current.before.condition}&rdquo;
-                        </p>
-                      </div>
-
-                      <div className="pt-3 border-t border-destructive/20 text-xs text-muted-foreground">
-                        Reported via citizen mobile app with verified location
-                        coordinates.
-                      </div>
+                    {/* Bottom Label */}
+                    <div className="absolute bottom-3 left-3 z-10 text-[11px] text-white/90 font-mono flex items-center gap-1.5">
+                      <span className={`h-2 w-2 rounded-full ${
+                        activeTab === "before" ? "bg-destructive animate-pulse" : "bg-emerald-400"
+                      }`} />
+                      {activeTab === "before"
+                        ? "Initial Citizen GPS Evidence"
+                        : "Supervised Field Close-out Photo"}
                     </div>
                   </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="after"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.25 }}
-                  className="rounded-2xl border border-emerald-500/40 bg-emerald-500/5 overflow-hidden"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-2">
-                    {/* Photographic Proof Image */}
-                    <div className="relative h-56 md:h-full min-h-[220px] w-full">
-                      <Image
-                        src={current.after.image}
-                        alt={current.after.label}
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
-                      <div className="absolute top-3 left-3">
-                        <span className="px-2.5 py-1 rounded-md bg-emerald-600 text-white text-[10px] font-mono font-bold tracking-wider">
-                          {current.after.stamp}
+
+                  {/* Condition Details & Inspection Notes */}
+                  <div className="p-6 sm:p-7 space-y-5 flex flex-col justify-between">
+                    <div className="space-y-3.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className={`font-bold flex items-center gap-1.5 ${
+                          activeTab === "before"
+                            ? "text-destructive"
+                            : "text-emerald-600 dark:text-emerald-400"
+                        }`}>
+                          <span className={`h-2 w-2 rounded-full ${
+                            activeTab === "before" ? "bg-destructive" : "bg-emerald-500"
+                          }`} />
+                          {currentContent.label}
+                        </span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
+                          activeTab === "before"
+                            ? "bg-destructive/10 text-destructive"
+                            : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                        }`}>
+                          {currentContent.status}
                         </span>
                       </div>
-                      <div className="absolute bottom-3 left-3 text-[11px] text-white/90 font-mono">
-                        Supervised Field Close-out Photo
-                      </div>
+
+                      <p className="text-sm sm:text-base text-foreground leading-relaxed font-medium">
+                        &ldquo;{currentContent.condition}&rdquo;
+                      </p>
                     </div>
 
-                    {/* Condition Details */}
-                    <div className="p-6 space-y-4 flex flex-col justify-between">
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
-                            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                            {current.after.label}
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">
-                            {current.after.status}
-                          </span>
-                        </div>
-                        <p className="text-sm sm:text-base text-foreground leading-relaxed font-medium">
-                          &ldquo;{current.after.condition}&rdquo;
-                        </p>
-                      </div>
-
-                      <div className="pt-3 border-t border-emerald-500/20 text-xs text-muted-foreground">
-                        Verified by municipal engineering team & archived in
-                        public audit log.
-                      </div>
+                    <div className="pt-3 border-t border-border/40 text-xs text-muted-foreground">
+                      {activeTab === "before"
+                        ? "Reported via citizen app with verified GPS coordinates."
+                        : "Verified by municipal engineering team & archived in public audit log."}
                     </div>
                   </div>
-                </motion.div>
-              )}
+                </div>
+              </motion.div>
             </AnimatePresence>
 
             {/* Resolution Metrics Strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs pt-2">
               <div className="p-3 rounded-xl bg-muted/40 border space-y-0.5">
                 <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
                   Turnaround Speed
