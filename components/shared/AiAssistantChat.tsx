@@ -20,7 +20,10 @@ const initialMessages: ChatMessage[] = [
     sender: "bot",
     text: "Hello! I am your **CityFix Civic AI Assistant**. I can help you report neighborhood problems, check departmental SLA turnaround times, understand priority processing, or guide you through city services.",
     links: [
-      { label: "Report an Issue", href: "/login?next=/dashboard/complaints/new" },
+      {
+        label: "Report an Issue",
+        href: "/login?next=/dashboard/complaints/new",
+      },
       { label: "Browse Services", href: "/services" },
       { label: "View Public Transparency", href: "/transparency" },
     ],
@@ -36,40 +39,75 @@ const suggestionChips = [
   "Which department handles garbage?",
 ];
 
-function generateBotResponse(userQuery: string): { text: string; links?: { label: string; href: string }[] } {
+function generateBotResponse(userQuery: string): {
+  text: string;
+  links?: { label: string; href: string }[];
+} {
   const query = userQuery.toLowerCase();
 
-  if (query.includes("pothole") || query.includes("road") || query.includes("asphalt") || query.includes("pavement")) {
+  if (
+    query.includes("pothole") ||
+    query.includes("road") ||
+    query.includes("asphalt") ||
+    query.includes("pavement")
+  ) {
     return {
       text: "Road damages and potholes are managed by the **Roads & Infrastructure Department** with a standard **48-hour SLA** target.\n\nTo file:\n1. Snap a quick photo of the surface damage\n2. Drop a GPS pin on the interactive map\n3. Our system automatically alerts on-duty road technicians.",
       links: [
-        { label: "Report Road Issue", href: "/login?next=/dashboard/complaints/new" },
+        {
+          label: "Report Road Issue",
+          href: "/login?next=/dashboard/complaints/new",
+        },
         { label: "Road Services Info", href: "/services" },
       ],
     };
   }
 
-  if (query.includes("water") || query.includes("leak") || query.includes("drain") || query.includes("flood") || query.includes("sewage")) {
+  if (
+    query.includes("water") ||
+    query.includes("leak") ||
+    query.includes("drain") ||
+    query.includes("flood") ||
+    query.includes("sewage")
+  ) {
     return {
       text: "Water leaks, blocked drains, and sewage issues are categorized under **Drainage & Water Services** with an urgent **24-hour SLA** turnaround. Emergency repairs are dispatched immediately to prevent property damage.",
       links: [
-        { label: "Report Water Problem", href: "/login?next=/dashboard/complaints/new" },
+        {
+          label: "Report Water Problem",
+          href: "/login?next=/dashboard/complaints/new",
+        },
         { label: "Municipal 311 Emergency", href: "/contact" },
       ],
     };
   }
 
-  if (query.includes("waste") || query.includes("garbage") || query.includes("trash") || query.includes("sanitation") || query.includes("dump")) {
+  if (
+    query.includes("waste") ||
+    query.includes("garbage") ||
+    query.includes("trash") ||
+    query.includes("sanitation") ||
+    query.includes("dump")
+  ) {
     return {
       text: "Garbage accumulation and overflowing dumpsters are handled by **Waste & Sanitation** with a **24-hour SLA**. Verified collection crews are assigned with photo-verified pickup proof upon completion.",
       links: [
-        { label: "Report Waste Overflow", href: "/login?next=/dashboard/complaints/new" },
+        {
+          label: "Report Waste Overflow",
+          href: "/login?next=/dashboard/complaints/new",
+        },
         { label: "Sanitation Catalog", href: "/services" },
       ],
     };
   }
 
-  if (query.includes("priority") || query.includes("stripe") || query.includes("fee") || query.includes("payment") || query.includes("pay")) {
+  if (
+    query.includes("priority") ||
+    query.includes("stripe") ||
+    query.includes("fee") ||
+    query.includes("payment") ||
+    query.includes("pay")
+  ) {
     return {
       text: "CityFix standard reporting is completely **free**. For select categories or expedited resolution, citizens can choose **Stripe Priority Processing** which applies an expedited turnaround multiplier and bumps the complaint to the top of technician field queues.",
       links: [
@@ -79,7 +117,12 @@ function generateBotResponse(userQuery: string): { text: string; links?: { label
     };
   }
 
-  if (query.includes("track") || query.includes("status") || query.includes("ref") || query.includes("progress")) {
+  if (
+    query.includes("track") ||
+    query.includes("status") ||
+    query.includes("ref") ||
+    query.includes("progress")
+  ) {
     return {
       text: "Every report is assigned a unique reference code (e.g. `REF-84920`). You can track live technician notes, supervisor assignments, and SLA countdown clocks inside your **Citizen Dashboard**.",
       links: [
@@ -89,7 +132,13 @@ function generateBotResponse(userQuery: string): { text: string; links?: { label
     };
   }
 
-  if (query.includes("sla") || query.includes("deadline") || query.includes("breach") || query.includes("time") || query.includes("hours")) {
+  if (
+    query.includes("sla") ||
+    query.includes("deadline") ||
+    query.includes("breach") ||
+    query.includes("time") ||
+    query.includes("hours")
+  ) {
     return {
       text: "**Service Level Agreements (SLAs)** are legally enforced target response windows (typically 24h to 48h). An automated watchdog tracks the live timer. If an issue is not resolved in time, it is flagged as **SLA Breached** and escalated to department directors.",
       links: [
@@ -99,12 +148,14 @@ function generateBotResponse(userQuery: string): { text: string; links?: { label
     };
   }
 
-  if (query.includes("reopen") || query.includes("unsatisfied") || query.includes("not fixed")) {
+  if (
+    query.includes("reopen") ||
+    query.includes("unsatisfied") ||
+    query.includes("not fixed")
+  ) {
     return {
       text: "If a complaint was marked RESOLVED but the problem persists, you can click **Reopen Complaint** in your dashboard within 7 days. This will escalate the ticket back to departmental supervisors for secondary inspection.",
-      links: [
-        { label: "Access Dashboard", href: "/dashboard" },
-      ],
+      links: [{ label: "Access Dashboard", href: "/dashboard" }],
     };
   }
 
@@ -112,7 +163,10 @@ function generateBotResponse(userQuery: string): { text: string; links?: { label
   return {
     text: "I understand you have a question regarding municipal civic action. You can file a new report in under 60 seconds with GPS and photos, or contact our city helpline desk for personalized assistance.",
     links: [
-      { label: "File a Complaint", href: "/login?next=/dashboard/complaints/new" },
+      {
+        label: "File a Complaint",
+        href: "/login?next=/dashboard/complaints/new",
+      },
       { label: "Browse Services", href: "/services" },
       { label: "Citizen Support Helpline", href: "/contact" },
     ],
@@ -144,7 +198,10 @@ export function AiAssistantChat() {
       id: `user-${Date.now()}`,
       sender: "user",
       text: query,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -158,7 +215,10 @@ export function AiAssistantChat() {
         sender: "bot",
         text: botReply.text,
         links: botReply.links,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       };
       setMessages((prev) => [...prev, botMsg]);
       setIsTyping(false);
@@ -172,7 +232,7 @@ export function AiAssistantChat() {
   return (
     <>
       {/* Floating Trigger Button */}
-      <div className="fixed bottom-6 right-6 z-40">
+      <div className="fixed bottom-20 right-6 z-40">
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -187,17 +247,33 @@ export function AiAssistantChat() {
           <span className="absolute top-0 right-0 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-background" />
 
           {isOpen ? (
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
+            <svg
+              className="h-8 w-8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           ) : (
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
-              <rect x="4" y="8" width="16" height="12" rx="4"/>
-              <circle cx="9" cy="13" r="1.5" fill="currentColor"/>
-              <circle cx="15" cy="13" r="1.5" fill="currentColor"/>
-              <line x1="9" y1="17" x2="15" y2="17"/>
+            <svg
+              className="h-8 w-8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
+              <rect x="4" y="8" width="16" height="12" rx="4" />
+              <circle cx="9" cy="13" r="1.5" fill="currentColor" />
+              <circle cx="15" cy="13" r="1.5" fill="currentColor" />
+              <line x1="9" y1="17" x2="15" y2="17" />
             </svg>
           )}
         </motion.button>
@@ -217,11 +293,17 @@ export function AiAssistantChat() {
             <div className="p-3.5 px-4 bg-gradient-to-r from-primary/10 via-background to-primary/5 border-b flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-primary to-blue-500 text-white flex items-center justify-center shadow-xs">
-                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="4" y="8" width="16" height="12" rx="4"/>
-                    <circle cx="9" cy="13" r="1.5" fill="currentColor"/>
-                    <circle cx="15" cy="13" r="1.5" fill="currentColor"/>
-                    <line x1="9" y1="17" x2="15" y2="17"/>
+                  <svg
+                    className="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <rect x="4" y="8" width="16" height="12" rx="4" />
+                    <circle cx="9" cy="13" r="1.5" fill="currentColor" />
+                    <circle cx="15" cy="13" r="1.5" fill="currentColor" />
+                    <line x1="9" y1="17" x2="15" y2="17" />
                   </svg>
                 </div>
                 <div>
@@ -246,11 +328,17 @@ export function AiAssistantChat() {
                   className="h-8 w-8 text-muted-foreground hover:text-foreground cursor-pointer rounded-lg"
                   title="Reset Conversation"
                 >
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-                    <path d="M21 3v5h-5"/>
-                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-                    <path d="M8 16H3v5"/>
+                  <svg
+                    className="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                    <path d="M21 3v5h-5" />
+                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                    <path d="M8 16H3v5" />
                   </svg>
                 </Button>
                 <Button
@@ -260,9 +348,15 @@ export function AiAssistantChat() {
                   className="h-8 w-8 text-muted-foreground hover:text-foreground cursor-pointer rounded-lg"
                   title="Close Assistant"
                 >
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="18" y1="6" x2="6" y2="18"/>
-                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  <svg
+                    className="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
                 </Button>
               </div>
@@ -367,7 +461,13 @@ export function AiAssistantChat() {
                 className="h-9 px-3 rounded-xl cursor-pointer gap-1 shadow-xs font-semibold"
               >
                 <span>Send</span>
-                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg
+                  className="h-3.5 w-3.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </Button>

@@ -3,7 +3,8 @@ import { ContactClient } from "@/components/public/ContactClient";
 
 export const metadata: Metadata = {
   title: "Contact & Citizen Helpline - CityFix",
-  description: "Reach CityFix municipal support, access emergency city hotlines, and send inquiries to departmental operations.",
+  description:
+    "Reach CityFix municipal support, access emergency city hotlines, and send inquiries to departmental operations.",
   openGraph: {
     title: "CityFix Contact & Citizen Helpline",
     description: "Get in touch with municipal teams and city operations desk.",

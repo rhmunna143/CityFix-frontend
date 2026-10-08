@@ -10,12 +10,14 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
     <div className="flex flex-col min-h-screen relative">
       <ScrollProgressBar />
       <Navbar />
-      <main className="flex-1 flex flex-col w-full">
-        {children}
-      </main>
+
+      <main className="flex-1 flex flex-col w-full">{children}</main>
+      
       <Footer />
-      <ScrollToTop />
+
       <AiAssistantChat />
+
+      <ScrollToTop />
     </div>
   );
 }
