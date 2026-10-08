@@ -2166,6 +2166,7 @@ export function InteractiveProblemSimulator() {
   const [direction, setDirection] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
   const [isPriority, setIsPriority] = useState(false);
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const simulationIssues = [
@@ -2253,13 +2254,16 @@ export function InteractiveProblemSimulator() {
     return () => clearInterval(timer);
   }, [isPaused, simulationIssues.length]);
 
-  // Keep active tab smoothly scrolled into view when index updates
+  // Keep active tab smoothly centered within the horizontal scroll container ONLY (does NOT scroll the window/page)
   useEffect(() => {
-    if (tabRefs.current[selectedIssueIndex]) {
-      tabRefs.current[selectedIssueIndex]?.scrollIntoView({
+    const container = tabsContainerRef.current;
+    const tab = tabRefs.current[selectedIssueIndex];
+    if (container && tab && container.scrollWidth > container.clientWidth) {
+      const scrollLeft =
+        tab.offsetLeft - container.clientWidth / 2 + tab.clientWidth / 2;
+      container.scrollTo({
+        left: Math.max(0, scrollLeft),
         behavior: "smooth",
-        block: "nearest",
-        inline: "center",
       });
     }
   }, [selectedIssueIndex]);
@@ -2335,7 +2339,10 @@ export function InteractiveProblemSimulator() {
 
         {/* Issue Type Selector Tabs with Sliding Arrow Controls & Active Progress Bar */}
         <div className="flex items-center justify-center gap-2 mx-auto px-2">
-          <div className="flex items-center gap-2 overflow-x-auto py-1 px-1 scrollbar-none">
+          <div
+            ref={tabsContainerRef}
+            className="relative flex items-center gap-2 overflow-x-auto py-1 px-1 scrollbar-none"
+          >
             {simulationIssues.map((issue, idx) => {
               const isSelected = selectedIssueIndex === idx;
               return (
