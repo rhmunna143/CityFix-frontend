@@ -232,7 +232,7 @@ export function AiAssistantChat() {
   return (
     <>
       {/* Floating Trigger Button */}
-      <div className="fixed bottom-6 right-6 z-40">
+      <div className="fixed bottom-20 right-6 z-40">
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -248,7 +248,7 @@ export function AiAssistantChat() {
 
           {isOpen ? (
             <svg
-              className="h-5 w-5"
+              className="h-8 w-8"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -261,7 +261,7 @@ export function AiAssistantChat() {
             </svg>
           ) : (
             <svg
-              className="h-5 w-5"
+              className="h-8 w-8"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"

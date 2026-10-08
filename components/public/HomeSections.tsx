@@ -164,7 +164,7 @@ export function HomeHero() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-radial from-primary/10 via-background to-background py-16 md:py-24 lg:py-28 px-4 sm:px-6 lg:px-8 border-b">
+    <section className="relative overflow-hidden bg-radial from-primary/10 via-background to-background py-16 md:py-24 lg:py-28 px-4 sm:px-6 lg:px-0 border-b">
       {/* Background Image Texture Overlay */}
       <div className="absolute inset-0 opacity-[0.05] dark:opacity-[0.07] pointer-events-none mix-blend-overlay">
         <Image
@@ -181,7 +181,7 @@ export function HomeHero() {
       <div className="absolute top-1/3 right-10 w-[300px] h-[250px] bg-emerald-500/10 blur-[90px] rounded-full pointer-events-none -z-10" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-29 items-center">
           {/* Left Column: Headline and CTAs */}
           <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
             <FadeIn direction="down" duration={0.4}>
@@ -1349,7 +1349,8 @@ export function BeforeAfterShowcase() {
 
   const totalSlides = cases.length * 2; // 8 total steps: 4 cases x 2 phases
   const selectedCase = Math.floor(slideIndex / 2);
-  const activeTab: "before" | "after" = slideIndex % 2 === 0 ? "before" : "after";
+  const activeTab: "before" | "after" =
+    slideIndex % 2 === 0 ? "before" : "after";
 
   // Auto-advance nested slider: guarantees sequential cycling across all 4 cases & both phases
   useEffect(() => {
@@ -1389,7 +1390,8 @@ export function BeforeAfterShowcase() {
   };
 
   const current = cases[selectedCase];
-  const currentContent = activeTab === "before" ? current.before : current.after;
+  const currentContent =
+    activeTab === "before" ? current.before : current.after;
 
   // Smooth directional slide variants for nested Before / After comparisons
   const nestedSlideVariants = {
@@ -1436,8 +1438,9 @@ export function BeforeAfterShowcase() {
             Before & After Field Resolutions
           </p>
           <p className="text-muted-foreground text-sm sm:text-base">
-            Every ticket requires photographic proof and supervisor inspection before
-            being marked resolved. Watch real municipal cases cycle automatically.
+            Every ticket requires photographic proof and supervisor inspection
+            before being marked resolved. Watch real municipal cases cycle
+            automatically.
           </p>
         </FadeIn>
 
@@ -1477,7 +1480,9 @@ export function BeforeAfterShowcase() {
                   )}
 
                   <span className="relative z-10 flex items-center gap-1.5">
-                    <span>Case #{idx + 1}: {c.department.split("&")[0]}</span>
+                    <span>
+                      Case #{idx + 1}: {c.department.split("&")[0]}
+                    </span>
                   </span>
                 </button>
               );
@@ -1527,7 +1532,11 @@ export function BeforeAfterShowcase() {
                     <motion.div
                       layoutId="activeCivicNestedTab"
                       className="absolute inset-0 bg-destructive z-0 rounded-lg"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 30,
+                      }}
                     />
                   )}
 
@@ -1546,9 +1555,13 @@ export function BeforeAfterShowcase() {
                   )}
 
                   <span className="relative z-10 flex items-center gap-1.5">
-                    <span className={`h-1.5 w-1.5 rounded-full ${
-                      activeTab === "before" ? "bg-white animate-pulse" : "bg-destructive"
-                    }`} />
+                    <span
+                      className={`h-1.5 w-1.5 rounded-full ${
+                        activeTab === "before"
+                          ? "bg-white animate-pulse"
+                          : "bg-destructive"
+                      }`}
+                    />
                     Before Defect
                   </span>
                 </button>
@@ -1567,7 +1580,11 @@ export function BeforeAfterShowcase() {
                     <motion.div
                       layoutId="activeCivicNestedTab"
                       className="absolute inset-0 bg-emerald-600 z-0 rounded-lg"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 30,
+                      }}
                     />
                   )}
 
@@ -1586,9 +1603,13 @@ export function BeforeAfterShowcase() {
                   )}
 
                   <span className="relative z-10 flex items-center gap-1.5">
-                    <span className={`h-1.5 w-1.5 rounded-full ${
-                      activeTab === "after" ? "bg-emerald-200" : "bg-emerald-600"
-                    }`} />
+                    <span
+                      className={`h-1.5 w-1.5 rounded-full ${
+                        activeTab === "after"
+                          ? "bg-emerald-200"
+                          : "bg-emerald-600"
+                      }`}
+                    />
                     After Resolution
                   </span>
                 </button>
@@ -1623,20 +1644,26 @@ export function BeforeAfterShowcase() {
 
                     {/* Stamp Badge */}
                     <div className="absolute top-3 left-3 z-10">
-                      <span className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-wider shadow-sm ${
-                        activeTab === "before"
-                          ? "bg-destructive text-destructive-foreground"
-                          : "bg-emerald-600 text-white"
-                      }`}>
+                      <span
+                        className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-wider shadow-sm ${
+                          activeTab === "before"
+                            ? "bg-destructive text-destructive-foreground"
+                            : "bg-emerald-600 text-white"
+                        }`}
+                      >
                         {currentContent.stamp}
                       </span>
                     </div>
 
                     {/* Bottom Label */}
                     <div className="absolute bottom-3 left-3 z-10 text-[11px] text-white/90 font-mono flex items-center gap-1.5">
-                      <span className={`h-2 w-2 rounded-full ${
-                        activeTab === "before" ? "bg-destructive animate-pulse" : "bg-emerald-400"
-                      }`} />
+                      <span
+                        className={`h-2 w-2 rounded-full ${
+                          activeTab === "before"
+                            ? "bg-destructive animate-pulse"
+                            : "bg-emerald-400"
+                        }`}
+                      />
                       {activeTab === "before"
                         ? "Initial Citizen GPS Evidence"
                         : "Supervised Field Close-out Photo"}
@@ -1647,21 +1674,29 @@ export function BeforeAfterShowcase() {
                   <div className="p-6 sm:p-7 space-y-5 flex flex-col justify-between">
                     <div className="space-y-3.5">
                       <div className="flex items-center justify-between text-xs">
-                        <span className={`font-bold flex items-center gap-1.5 ${
-                          activeTab === "before"
-                            ? "text-destructive"
-                            : "text-emerald-600 dark:text-emerald-400"
-                        }`}>
-                          <span className={`h-2 w-2 rounded-full ${
-                            activeTab === "before" ? "bg-destructive" : "bg-emerald-500"
-                          }`} />
+                        <span
+                          className={`font-bold flex items-center gap-1.5 ${
+                            activeTab === "before"
+                              ? "text-destructive"
+                              : "text-emerald-600 dark:text-emerald-400"
+                          }`}
+                        >
+                          <span
+                            className={`h-2 w-2 rounded-full ${
+                              activeTab === "before"
+                                ? "bg-destructive"
+                                : "bg-emerald-500"
+                            }`}
+                          />
                           {currentContent.label}
                         </span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
-                          activeTab === "before"
-                            ? "bg-destructive/10 text-destructive"
-                            : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                        }`}>
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
+                            activeTab === "before"
+                              ? "bg-destructive/10 text-destructive"
+                              : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                          }`}
+                        >
                           {currentContent.status}
                         </span>
                       </div>

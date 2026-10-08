@@ -30,27 +30,23 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-md transition-all">
-      <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-0">
         {/* Brand Logo */}
-        <div className="flex items-center gap-3">
-          <Link
-            href="/"
-            className="flex items-center gap-2 group cursor-pointer"
-          >
-            <div className="h-12 w-12 p-1 bg-white rounded-xl flex items-center justify-center text-primary-foreground font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
-              <Image src={"/mango.png"} width={"60"} height={"60"} alt="logo" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold montecarlo-regular text-3xl tracking-tight text-foreground group-hover:text-primary transition-colors">
-                CityFix
-              </span>
+        <Link href="/" className="flex items-center gap-2 group cursor-pointer">
+          <div className="h-12 w-12 p-1 bg-white rounded-xl flex items-center justify-center text-primary-foreground font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
+            <Image src={"/mango.png"} width={"60"} height={"60"} alt="logo" />
+          </div>
 
-              <span className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground -mt-1">
-                Civic Action
-              </span>
-            </div>
-          </Link>
-        </div>
+          <div className="flex flex-col">
+            <span className="font-bold montecarlo-regular text-3xl tracking-tight text-foreground group-hover:text-primary transition-colors">
+              CityFix
+            </span>
+
+            <span className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground -mt-1">
+              Civic Action
+            </span>
+          </div>
+        </Link>
 
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-1 lg:gap-2">
