@@ -21,7 +21,7 @@
 | **API Documentation (Postman)** | [Postman Collection Documenter](https://documenter.getpostman.com/view/31457961/2sBYAxNoWH) |
 | **Frontend Repository** | [https://github.com/rhmunna143/CityFix-frontend](https://github.com/rhmunna143/CityFix-frontend) |
 | **Backend Repository** | [https://github.com/rhmunna143/CityFix-backend](https://github.com/rhmunna143/CityFix-backend) |
-| **Demo Video Walkthrough** | *(5–10 min link)* |
+| **Demo Video Walkthrough** | https://youtu.be/qtuWLBJo10k |
 
 ---
 
