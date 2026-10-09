@@ -16,7 +16,7 @@
 | Resource | URL |
 | :--- | :--- |
 | **Project Name** | **CityFix — Municipal Civic Action & SLA Platform** |
-| **Live Frontend Application** | [Deployed Vercel URL](https://cityfix-frontend.vercel.app) *(Set by deployer)* |
+| **Live Frontend Application** | [Deployed Vercel URL](https://cityfix-nine.vercel.app) |
 | **Live Backend API (B7A6)** | [https://cityfix-backend-lime.vercel.app](https://cityfix-backend-lime.vercel.app) |
 | **API Documentation (Postman)** | [Postman Collection Documenter](https://documenter.getpostman.com/view/31457961/2sBYAxNoWH) |
 | **Frontend Repository** | [https://github.com/rhmunna143/CityFix-frontend](https://github.com/rhmunna143/CityFix-frontend) |
