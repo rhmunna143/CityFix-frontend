@@ -250,7 +250,7 @@ Frontend Repo           : https://github.com/rhmunna143/CityFix-frontend
 Live Backend URL        : https://cityfix-backend-lime.vercel.app
 Live Frontend URL       : https://cityfix-nine.vercel.app
 API Documentation       : https://documenter.getpostman.com/view/31457961/2sBYAxNoWH
-Demo Video              : [PASTE YOUR LOOM OR GOOGLE DRIVE VIDEO LINK HERE]
+Demo Video              : https://youtu.be/qtuWLBJo10k
 Demo Admin Email        : admin@cityfix.local
 Demo Admin Password     : securepassword123
 ```

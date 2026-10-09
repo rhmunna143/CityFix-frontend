@@ -58,7 +58,7 @@ export default async function HomePage() {
   const avgHours = stats?.avgResolutionHours
     ? Math.round(stats.avgResolutionHours)
     : 48;
-
+  
   return (
     <div className="flex flex-col w-full">
       <HomeHero />
