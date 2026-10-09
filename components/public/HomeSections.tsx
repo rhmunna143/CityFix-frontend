@@ -88,7 +88,7 @@ const heroIncidents = [
     status: "RESOLVED",
     icon: "water",
     image:
-      "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=600&q=80",
+      "https://i.ibb.co.com/27R3jTxb/109-cover-image-1920x1080.jpg",
   },
 ];
 
@@ -1332,7 +1332,7 @@ export function BeforeAfterShowcase() {
         status: "Immediate Hazard",
         label: "Before CityFix Intervention",
         image:
-          "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",
+          "https://i.ibb.co.com/n8NZj5gZ/Gemini-Generated-Image-avf251avf251avf2.jpg",
         stamp: "ELECTRICAL HAZARD LOGGED",
       },
       after: {
@@ -1341,7 +1341,7 @@ export function BeforeAfterShowcase() {
         status: "Hazard Neutralized",
         label: "After Municipal Completion",
         image:
-          "https://i.ibb.co.com/0p4kmwz9/mario-spencer-Uyqxl-MS8-X84-unsplash.jpg",
+          "https://i.ibb.co.com/b5Nrdcnr/Gemini-Generated-Image-41rkz941rkz941rk.jpg",
         stamp: "POWER CORRIDOR SECURED",
       },
     },
