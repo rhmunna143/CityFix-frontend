@@ -1,3 +1,9 @@
+### Result:
+- Live Website URL: https://cityfix-nine.vercel.app
+- GitHub Repository Link: https://github.com/rhmunna143/CityFix-frontend
+- Technical Documentation: https://docs.google.com/document/d/16nNpZEWVkF1mfWLHacnS8InKFQDtXx7LehqJ9VrlRsc/edit?usp=sharing
+- Demo Video: https://youtu.be/jS7HK2y0_ic
+
 ### Summary of Completed Work
 
 #### 1. Package & Dependency Hygiene (Phase 4.3)
