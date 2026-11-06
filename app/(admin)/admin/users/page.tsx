@@ -168,6 +168,7 @@ export default function AdminUsersPage() {
         columns={columns} 
         isLoading={isLoading} 
         emptyMessage="No users found."
+        getRowId={(u) => u.id}
       />
 
       {data?.meta && (

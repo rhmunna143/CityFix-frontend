@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/lib/auth/AuthContext";
+import Image from "next/image";
+import { useAuthState, useAuthActions } from "@/lib/auth/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { updateProfile, uploadAvatar } from "@/lib/api/users";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +13,8 @@ import { Loader2, Camera } from "lucide-react";
 import { toast } from "sonner";
 
 export function ProfileForm() {
-  const { user, fetchUser } = useAuth();
+  const { user } = useAuthState();
+  const { fetchUser } = useAuthActions();
   const [name, setName] = useState(user?.name || "");
   const [phone, setPhone] = useState(user?.phone || "");
   const [isUploading, setIsUploading] = useState(false);
@@ -60,7 +62,13 @@ export function ProfileForm() {
         <div className="flex items-center gap-6">
           <div className="relative h-24 w-24 rounded-full bg-muted overflow-hidden border flex items-center justify-center shrink-0">
             {user.avatarUrl ? (
-              <img src={user.avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+              <Image
+                src={user.avatarUrl}
+                alt="Avatar"
+                fill
+                sizes="96px"
+                className="object-cover"
+              />
             ) : (
               <span className="text-2xl font-semibold text-muted-foreground">{user.name?.charAt(0)}</span>
             )}

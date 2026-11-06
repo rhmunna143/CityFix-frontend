@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/lib/auth/AuthContext";
+import { useAuthState } from "@/lib/auth/AuthContext";
 import { Role } from "@/types/api";
 import { ReactNode } from "react";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,7 @@ interface RoleGateProps {
 }
 
 export function RoleGate({ allowedRoles, children }: RoleGateProps) {
-  const { role, isLoading } = useAuth();
+  const { role, isLoading } = useAuthState();
   const router = useRouter();
 
   if (isLoading) return null;

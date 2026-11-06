@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Department, Category } from "@/types/api";
+import { useDebounce } from "@/hooks/useDebounce";
 import {
   Card,
   CardContent,
@@ -78,6 +79,7 @@ export function ServicesCatalog({
 }: ServicesCatalogProps) {
   const [selectedDept, setSelectedDept] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedQuery = useDebounce(searchQuery, 250);
   const [calcDept, setCalcDept] = useState<string>("Roads");
   const [calcPriority, setCalcPriority] = useState<boolean>(false);
 
@@ -88,8 +90,8 @@ export function ServicesCatalog({
         return false;
       }
       // Search query
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
+      if (debouncedQuery.trim()) {
+        const q = debouncedQuery.toLowerCase();
         const deptName =
           departments.find((d) => d.id === cat.departmentId)?.name ||
           cat.department?.name ||
@@ -101,7 +103,7 @@ export function ServicesCatalog({
       }
       return true;
     });
-  }, [categories, departments, selectedDept, searchQuery]);
+  }, [categories, departments, selectedDept, debouncedQuery]);
 
   return (
     <div className="space-y-14">

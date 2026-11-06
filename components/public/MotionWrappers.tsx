@@ -1,7 +1,14 @@
 "use client";
 
-import { motion, HTMLMotionProps, AnimatePresence, useScroll } from "framer-motion";
-import { ReactNode, useEffect, useState } from "react";
+import {
+  motion,
+  HTMLMotionProps,
+  AnimatePresence,
+  useScroll,
+  animate,
+  useInView,
+} from "framer-motion";
+import { ReactNode, useEffect, useRef } from "react";
 
 // Top scroll progress indicator
 export function ScrollProgressBar() {
@@ -14,27 +21,34 @@ export function ScrollProgressBar() {
   );
 }
 
-// FadeIn element on viewport scroll
+// FadeIn element on viewport scroll with optional eager SSR rendering for above-the-fold content
 export function FadeIn({
   children,
   delay = 0,
   duration = 0.5,
   direction = "up",
   className = "",
+  eager = false,
 }: {
   children: ReactNode;
   delay?: number;
   duration?: number;
   direction?: "up" | "down" | "left" | "right" | "none";
   className?: string;
+  eager?: boolean;
 }) {
   const getOffset = () => {
     switch (direction) {
-      case "up": return { y: 24, x: 0 };
-      case "down": return { y: -24, x: 0 };
-      case "left": return { x: 24, y: 0 };
-      case "right": return { x: -24, y: 0 };
-      default: return { x: 0, y: 0 };
+      case "up":
+        return { y: 24, x: 0 };
+      case "down":
+        return { y: -24, x: 0 };
+      case "left":
+        return { x: 24, y: 0 };
+      case "right":
+        return { x: -24, y: 0 };
+      default:
+        return { x: 0, y: 0 };
     }
   };
 
@@ -42,8 +56,8 @@ export function FadeIn({
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: offset.x, y: offset.y }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      initial={eager ? false : { opacity: 0, x: offset.x, y: offset.y }}
+      whileInView={eager ? undefined : { opacity: 1, x: 0, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
       className={className}
@@ -128,7 +142,7 @@ export function HoverLiftCard({
   );
 }
 
-// Smooth Animated Counter on viewport entry
+// Smooth Animated Counter on viewport entry — 0 React re-renders during animation
 export function AnimatedCounter({
   target,
   suffix = "",
@@ -140,43 +154,26 @@ export function AnimatedCounter({
   duration?: number;
   className?: string;
 }) {
-  const [count, setCount] = useState(0);
-  const [inView, setInView] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true });
 
   useEffect(() => {
-    if (!inView) return;
-    let start = 0;
-    const end = target;
-    if (start === end) {
-      setCount(end);
-      return;
-    }
-
-    const totalSteps = 40;
-    const increment = end / totalSteps;
-    const stepTime = (duration * 1000) / totalSteps;
-
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= end) {
-        setCount(end);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, stepTime);
-
-    return () => clearInterval(timer);
-  }, [inView, target, duration]);
+    if (!inView || !ref.current) return;
+    const el = ref.current;
+    const controls = animate(0, target, {
+      duration,
+      ease: "easeOut",
+      onUpdate: (v) => {
+        el.textContent = `${Math.round(v)}${suffix}`;
+      },
+    });
+    return () => controls.stop();
+  }, [inView, target, suffix, duration]);
 
   return (
-    <motion.span
-      onViewportEnter={() => setInView(true)}
-      viewport={{ once: true }}
-      className={className}
-    >
-      {count}{suffix}
-    </motion.span>
+    <span ref={ref} className={className}>
+      0{suffix}
+    </span>
   );
 }
 

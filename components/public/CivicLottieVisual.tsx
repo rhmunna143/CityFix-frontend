@@ -1,54 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import dynamic from "next/dynamic";
-
-// Dynamically import DotLottieReact with SSR disabled to prevent hydration mismatch
-const DotLottiePlayer = dynamic(
-  () => import("@lottiefiles/dotlottie-react").then((mod) => mod.DotLottieReact),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="w-full h-full flex items-center justify-center animate-pulse bg-muted/40 rounded-2xl" />
-    ),
-  }
-);
-
-interface LottieAnimationProps {
-  src: string;
-  autoplay?: boolean;
-  loop?: boolean;
-  className?: string;
-}
-
-export function DotLottieEmbed({
-  src,
-  autoplay = true,
-  loop = true,
-  className = "w-full h-full",
-}: LottieAnimationProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return <div className={`animate-pulse bg-muted/30 rounded-2xl ${className}`} />;
-  }
-
-  return (
-    <div className={`relative overflow-hidden ${className}`}>
-      <DotLottiePlayer
-        src={src}
-        autoplay={autoplay}
-        loop={loop}
-        className="w-full h-full"
-      />
-    </div>
-  );
-}
 
 /**
  * High-performance Framer-Motion Animated Civic Radar Screen
