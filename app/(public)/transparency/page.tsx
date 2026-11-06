@@ -1,9 +1,11 @@
 import { Metadata } from "next";
 import { TransparencyClient } from "@/components/public/TransparencyClient";
+import { serverFetch } from "@/lib/api/server";
 
 export const metadata: Metadata = {
   title: "Public Transparency & Civic SLA Metrics - CityFix",
-  description: "View open municipal performance data, resolution times, departmental accountability, and SLA compliance on CityFix.",
+  description:
+    "View open municipal performance data, resolution times, departmental accountability, and SLA compliance on CityFix.",
   openGraph: {
     title: "CityFix Public Transparency Portal",
     description: "Open municipal performance data and SLA compliance metrics.",
@@ -16,29 +18,32 @@ interface PublicStats {
   perCategoryCounts?: Record<string, number>;
 }
 
-async function getTransparencyData(): Promise<{ stats: PublicStats | null; categories: any[] }> {
-  try {
-    const baseUrl = process.env.API_BASE_URL || "http://localhost:5000/api/v1";
-    const [statsRes, catRes] = await Promise.all([
-      fetch(`${baseUrl}/public/stats`, { cache: "no-store" }),
-      fetch(`${baseUrl}/categories`, { cache: "no-store" }),
-    ]);
-
-    const statsJson = statsRes.ok ? await statsRes.json() : { data: null };
-    const catJson = catRes.ok ? await catRes.json() : { data: [] };
-
-    const categories = Array.isArray(catJson.data) ? catJson.data : catJson.data?.items || [];
-    return { stats: statsJson.data, categories };
-  } catch {
-    return { stats: null, categories: [] };
-  }
+interface CategoryItem {
+  id: string;
+  name: string;
+  slaHours?: number;
+  department?: {
+    name?: string;
+  };
 }
 
 export default async function TransparencyPage() {
-  const { stats, categories } = await getTransparencyData();
+  const [stats, categoriesData] = await Promise.all([
+    serverFetch<PublicStats>("/public/stats", { revalidate: 60 }),
+    serverFetch<CategoryItem[] | { items: CategoryItem[] }>("/categories", {
+      revalidate: 300,
+      tags: ["catalog"],
+    }),
+  ]);
+
+  const categories = Array.isArray(categoriesData)
+    ? categoriesData
+    : categoriesData?.items || [];
 
   const totalResolved = stats?.totalResolved ?? 2;
-  const avgHours = stats?.avgResolutionHours ? Math.round(stats.avgResolutionHours) : 48;
+  const avgHours = stats?.avgResolutionHours
+    ? Math.round(stats.avgResolutionHours)
+    : 48;
   const categoryCounts = stats?.perCategoryCounts || {};
 
   return (

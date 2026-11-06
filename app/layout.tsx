@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/components/providers";
+import { WebVitals } from "@/components/shared/WebVitals";
 
 const inter = Inter({ subsets: ["latin"] });
 const monteCarlo = localFont({
@@ -36,6 +37,7 @@ export default function RootLayout({
     <html lang="en" className="h-full" suppressHydrationWarning>
       <body className={`${inter.className} ${monteCarlo.variable} min-h-full flex flex-col antialiased`} suppressHydrationWarning>
         <Providers>
+          <WebVitals />
           {children}
           <Toaster position="top-right" richColors />
         </Providers>

@@ -1,26 +1,22 @@
-"use client";
-
-import { useState } from "react";
 import Image from "next/image";
 import { ContactForm } from "@/components/public/ContactForm";
 import {
   FadeIn,
-  StaggerContainer,
-  StaggerItem,
   HoverLiftCard,
   FloatingBadge,
 } from "@/components/public/MotionWrappers";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface FAQItem {
   q: string;
   a: string;
+  defaultOpen?: boolean;
 }
 
 const faqs: FAQItem[] = [
   {
     q: "How do I track the progress of my reported issue?",
     a: "Every reported issue receives a unique reference code (e.g. REF-12345). You can log in to your Citizen Dashboard at any time to see the live status (SUBMITTED, ASSIGNED, IN PROGRESS, RESOLVED, or CLOSED), assigned technician notes, and remaining SLA countdown clock.",
+    defaultOpen: true,
   },
   {
     q: "What happens if a department breaches its SLA deadline?",
@@ -43,7 +39,7 @@ const faqs: FAQItem[] = [
 const municipalHubs = [
   {
     name: "Central City Hall Citizen Hub",
-    address: "100 Municipal Way &bull; Zone 1",
+    address: "100 Municipal Way • Zone 1",
     hours: "Mon–Fri, 8:00 AM – 5:00 PM",
     phone: "+1 (800) 555-CITY (Ext. 101)",
     role: "Walk-in registration, public hearings, permits",
@@ -52,7 +48,7 @@ const municipalHubs = [
   },
   {
     name: "North District Public Works Depot",
-    address: "45 North Infrastructure Blvd &bull; Ward 2",
+    address: "45 North Infrastructure Blvd • Ward 2",
     hours: "Mon–Sat, 7:00 AM – 6:00 PM",
     phone: "+1 (800) 555-ROAD (Ext. 204)",
     role: "Pothole dispatch, asphalt repair staging",
@@ -61,7 +57,7 @@ const municipalHubs = [
   },
   {
     name: "East Water & Sanitation Emergency Center",
-    address: "12 Riverfront Parkway &bull; Ward 3",
+    address: "12 Riverfront Parkway • Ward 3",
     hours: "24/7 Active Field Response",
     phone: "+1 (800) 555-DRAIN (Ext. 308)",
     role: "Water main breaches, emergency flood drainage",
@@ -71,12 +67,6 @@ const municipalHubs = [
 ];
 
 export function ContactClient() {
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
-
-  const toggleFaq = (index: number) => {
-    setOpenFaqIndex((prev) => (prev === index ? null : index));
-  };
-
   return (
     <div className="space-y-16 w-full">
       {/* 1. Header */}
@@ -207,7 +197,7 @@ export function ContactClient() {
                       City Hall, 100 Municipal Way
                     </span>
                     <p className="text-xs text-muted-foreground">
-                      Civic Center Zone 1 &bull; Walk-in desk open 9am-4pm
+                      Civic Center Zone 1 • Walk-in desk open 9am-4pm
                     </p>
                   </div>
                 </HoverLiftCard>
@@ -239,6 +229,7 @@ export function ContactClient() {
                       src={hub.image}
                       alt={hub.name}
                       fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -258,9 +249,7 @@ export function ContactClient() {
                         <span className="font-semibold text-foreground">
                           Address:
                         </span>
-                        <span
-                          dangerouslySetInnerHTML={{ __html: hub.address }}
-                        />
+                        <span>{hub.address}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-muted-foreground">
                         <span className="font-semibold text-foreground">
@@ -283,7 +272,7 @@ export function ContactClient() {
         </div>
       </div>
 
-      {/* 5. Frequently Asked Questions with Animated Accordion */}
+      {/* 5. Frequently Asked Questions with Zero-JS Details Accordion */}
       <div className="space-y-6 pt-6 border-t">
         <FadeIn className="space-y-2 text-center max-w-2xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
@@ -296,61 +285,34 @@ export function ContactClient() {
         </FadeIn>
 
         <div className="space-y-3 max-w-3xl mx-auto">
-          {faqs.map((faq, idx) => {
-            const isOpen = openFaqIndex === idx;
-            return (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: idx * 0.05 }}
-                className="rounded-2xl border bg-card/80 backdrop-blur-xs overflow-hidden shadow-xs hover:border-primary/40 transition-colors"
-              >
-                <button
-                  type="button"
-                  onClick={() => toggleFaq(idx)}
-                  className="w-full p-5 text-left flex items-center justify-between gap-4 cursor-pointer"
-                  aria-expanded={isOpen}
-                >
-                  <span className="font-bold text-base text-foreground tracking-tight">
-                    {faq.q}
-                  </span>
-                  <motion.span
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="h-6 w-6 rounded-full bg-muted flex items-center justify-center shrink-0 text-muted-foreground"
+          {faqs.map((faq, idx) => (
+            <details
+              key={idx}
+              name="contact-faq"
+              open={faq.defaultOpen}
+              className="group rounded-2xl border bg-card/80 backdrop-blur-xs overflow-hidden shadow-xs hover:border-primary/40 transition-colors"
+            >
+              <summary className="w-full p-5 text-left flex items-center justify-between gap-4 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden">
+                <span className="font-bold text-base text-foreground tracking-tight">
+                  {faq.q}
+                </span>
+                <span className="h-6 w-6 rounded-full bg-muted flex items-center justify-center shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180">
+                  <svg
+                    className="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
                   >
-                    <svg
-                      className="h-4 w-4"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
-                  </motion.span>
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      key="content"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: "easeInOut" }}
-                    >
-                      <div className="px-5 pb-5 pt-1 text-sm text-muted-foreground leading-relaxed border-t border-border/40">
-                        {faq.a}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </span>
+              </summary>
+              <div className="px-5 pb-5 pt-1 text-sm text-muted-foreground leading-relaxed border-t border-border/40">
+                {faq.a}
+              </div>
+            </details>
+          ))}
         </div>
       </div>
     </div>

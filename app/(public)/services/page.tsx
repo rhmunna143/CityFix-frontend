@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { ServicesCatalog } from "@/components/public/ServicesCatalog";
 import { Department, Category } from "@/types/api";
 import { FadeIn, FloatingBadge } from "@/components/public/MotionWrappers";
+import { serverFetch } from "@/lib/api/server";
 
 export const metadata: Metadata = {
   title: "Municipal Services & Categories - CityFix",
@@ -18,27 +19,25 @@ async function getServicesData(): Promise<{
   departments: Department[];
   categories: Category[];
 }> {
-  try {
-    const baseUrl = process.env.API_BASE_URL || "http://localhost:5000/api/v1";
-    const [deptRes, catRes] = await Promise.all([
-      fetch(`${baseUrl}/departments`, { cache: "no-store" }),
-      fetch(`${baseUrl}/categories`, { cache: "no-store" }),
-    ]);
+  const [deptsData, catsData] = await Promise.all([
+    serverFetch<Department[] | { items: Department[] }>("/departments", {
+      revalidate: 300,
+      tags: ["departments"],
+    }),
+    serverFetch<Category[] | { items: Category[] }>("/categories", {
+      revalidate: 300,
+      tags: ["catalog"],
+    }),
+  ]);
 
-    const deptsJson = deptRes.ok ? await deptRes.json() : { data: [] };
-    const catsJson = catRes.ok ? await catRes.json() : { data: [] };
+  const departments: Department[] = Array.isArray(deptsData)
+    ? deptsData
+    : deptsData?.items || [];
+  const categories: Category[] = Array.isArray(catsData)
+    ? catsData
+    : catsData?.items || [];
 
-    const departments: Department[] = Array.isArray(deptsJson.data)
-      ? deptsJson.data
-      : deptsJson.data?.items || [];
-    const categories: Category[] = Array.isArray(catsJson.data)
-      ? catsJson.data
-      : catsJson.data?.items || [];
-
-    return { departments, categories };
-  } catch {
-    return { departments: [], categories: [] };
-  }
+  return { departments, categories };
 }
 
 export default async function ServicesPage() {

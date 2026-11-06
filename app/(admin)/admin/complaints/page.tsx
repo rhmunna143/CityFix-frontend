@@ -21,7 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { UserPlus, Loader2, AlertCircle, Trash2 } from "lucide-react";
+import { UserPlus, Loader2, Trash2 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { format } from "date-fns";
