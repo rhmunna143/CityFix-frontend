@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
 import { ScrollToTop } from "@/components/shared/ScrollToTop";
-import { AiAssistantChat } from "@/components/shared/AiAssistantChat";
+import { LazyAiAssistant } from "@/components/shared/LazyAiAssistant";
 import { ScrollProgressBar } from "@/components/public/MotionWrappers";
 import { ReactNode } from "react";
 
@@ -15,7 +15,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
       
       <Footer />
 
-      <AiAssistantChat />
+      <LazyAiAssistant />
 
       <ScrollToTop />
     </div>
