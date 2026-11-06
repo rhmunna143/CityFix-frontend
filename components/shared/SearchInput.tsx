@@ -3,19 +3,24 @@
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useUrlState } from "@/hooks/useUrlState";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 
-export function SearchInput({ placeholder = "Search complaints..." }: { placeholder?: string }) {
+export function SearchInput({
+  placeholder = "Search complaints...",
+}: {
+  placeholder?: string;
+}) {
   const { get, updateUrl } = useUrlState();
-  const [value, setValue] = useState(get("q"));
-  const debouncedValue = useDebounce(value, 300);
+  const [value, setValue] = useState(() => get("q"));
+  const debounced = useDebounce(value, 300);
+  const committed = useRef(value);
 
   useEffect(() => {
-    if (debouncedValue !== get("q")) {
-      updateUrl({ q: debouncedValue });
-    }
-  }, [debouncedValue, get, updateUrl]);
+    if (debounced === committed.current) return;
+    committed.current = debounced;
+    updateUrl({ q: debounced });
+  }, [debounced, updateUrl]);
 
   return (
     <div className="relative max-w-sm w-full">

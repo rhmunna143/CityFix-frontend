@@ -1,41 +1,47 @@
 "use client";
 
+import { startTransition, useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
 
 export function useUrlState() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  // reads the live URL → identity never changes on query param change → safe in effect deps
   const updateUrl = useCallback(
     (updates: Record<string, string | null>) => {
-      const params = new URLSearchParams(searchParams.toString());
-      
-      let isPageUpdate = false;
-      Object.entries(updates).forEach(([key, value]) => {
-        if (key === "page") isPageUpdate = true;
-        
-        if (value === null || value === "") {
-          params.delete(key);
-        } else {
-          params.set(key, value);
-        }
-      });
+      const params =
+        typeof window !== "undefined"
+          ? new URLSearchParams(window.location.search)
+          : new URLSearchParams();
 
-      if (!isPageUpdate && params.has("page")) {
+      for (const [k, v] of Object.entries(updates)) {
+        if (v === null || v === "") {
+          params.delete(k);
+        } else {
+          params.set(k, v);
+        }
+      }
+      if (!("page" in updates) && params.has("page")) {
         params.set("page", "1");
       }
-
-      router.push(`${pathname}?${params.toString()}`);
+      startTransition(() => {
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+      });
     },
-    [pathname, router, searchParams]
+    [pathname, router]
   );
 
-  return {
-    searchParams,
-    updateUrl,
-    get: (key: string, defaultValue: string = "") => searchParams.get(key) || defaultValue,
-    getPage: () => parseInt(searchParams.get("page") || "1", 10),
-  };
+  const get = useCallback(
+    (key: string, fallback = "") => searchParams.get(key) || fallback,
+    [searchParams]
+  );
+
+  const getPage = useCallback(
+    () => parseInt(searchParams.get("page") || "1", 10),
+    [searchParams]
+  );
+
+  return { searchParams, updateUrl, get, getPage };
 }
