@@ -1,27 +1,24 @@
 "use client";
 
-import { ReactNode, useState, useEffect, useSyncExternalStore } from "react";
+import { ReactNode, useState, useEffect, useSyncExternalStore, memo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { useAuthState, useAuthActions } from "@/lib/auth/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   LogOut,
-  Bell,
   ArrowLeft,
   Menu,
   X,
   ChevronLeft,
-  PanelLeftClose,
   PanelLeftOpen,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { getNotifications } from "@/lib/api/notifications";
+import { NotificationBell } from "@/components/shared/NotificationBell";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import Image from "next/image";
 import { cn } from "cn";
 
-interface NavItem {
+export interface NavItem {
   title: string;
   href: string;
   icon: ReactNode;
@@ -53,10 +50,85 @@ function getServerSnapshot(): boolean {
   return false;
 }
 
+function isItemActive(pathname: string, href: string) {
+  if (pathname === href) return true;
+  if (href === "/admin" || href === "/dashboard" || href === "/staff") {
+    return false;
+  }
+  return pathname.startsWith(href);
+}
+
+const SidebarNav = memo(function SidebarNav({
+  navItems,
+  pathname,
+  isCollapsed,
+}: {
+  navItems: NavItem[];
+  pathname: string;
+  isCollapsed: boolean;
+}) {
+  return (
+    <nav className="flex flex-col gap-1.5 my-4 flex-1 overflow-y-auto overflow-x-hidden">
+      {navItems.map((item) => {
+        const isActive = isItemActive(pathname, item.href);
+
+        if (isCollapsed) {
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              title={item.title}
+              className={cn(
+                "group relative flex items-center justify-center h-10 w-10 mx-auto rounded-lg transition-all duration-150 cursor-pointer",
+                isActive
+                  ? "bg-primary text-primary-foreground shadow-xs font-semibold"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent",
+              )}
+            >
+              <span className="shrink-0 transition-transform duration-150 group-hover:scale-110">
+                {item.icon}
+              </span>
+              <span className="absolute left-full ml-3 px-2.5 py-1 bg-popover text-popover-foreground text-xs font-medium rounded-md shadow-md border border-border opacity-0 pointer-events-none -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 z-50 whitespace-nowrap">
+                {item.title}
+              </span>
+            </Link>
+          );
+        }
+
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={cn(
+              "group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer",
+              isActive
+                ? "bg-primary text-primary-foreground shadow-xs font-semibold"
+                : "text-muted-foreground hover:text-foreground hover:bg-accent",
+            )}
+          >
+            <span
+              className={cn(
+                "shrink-0 transition-transform duration-150 group-hover:scale-110",
+                isActive
+                  ? "text-primary-foreground"
+                  : "text-muted-foreground group-hover:text-foreground",
+              )}
+            >
+              {item.icon}
+            </span>
+            <span className="truncate">{item.title}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+});
+
 export function DashboardShell({ children, navItems }: DashboardShellProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { user } = useAuthState();
+  const { logout } = useAuthActions();
 
   const isCollapsedExternal = useSyncExternalStore(
     subscribeSidebar,
@@ -109,16 +181,6 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
     setCollapsedOverride(next);
   };
 
-  const { data: notificationsData } = useQuery({
-    queryKey: ["notifications-bell"],
-    queryFn: () => getNotifications({ limit: "50" }),
-    refetchInterval: 15000,
-    enabled: !!user && user.role !== "SUPER_ADMIN",
-  });
-
-  const unreadCount =
-    notificationsData?.items.filter((n) => !n.isRead).length || 0;
-
   const getRoleBadge = (role?: string) => {
     if (!role) return "Portal";
     switch (role) {
@@ -145,14 +207,6 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
     if (role === "STAFF") return "/staff/notifications";
     if (role === "CITIZEN") return "/dashboard/notifications";
     return "/admin/notifications";
-  };
-
-  const isItemActive = (href: string) => {
-    if (pathname === href) return true;
-    if (href === "/admin" || href === "/dashboard" || href === "/staff") {
-      return false;
-    }
-    return pathname.startsWith(href);
   };
 
   return (
@@ -232,60 +286,7 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
         )}
 
         {/* Sidebar Nav Items */}
-        <nav className="flex flex-col gap-1.5 my-4 flex-1 overflow-y-auto overflow-x-hidden">
-          {navItems.map((item) => {
-            const isActive = isItemActive(item.href);
-
-            if (isCollapsed) {
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  title={item.title}
-                  className={cn(
-                    "group relative flex items-center justify-center h-10 w-10 mx-auto rounded-lg transition-all duration-150 cursor-pointer",
-                    isActive
-                      ? "bg-primary text-primary-foreground shadow-xs font-semibold"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent",
-                  )}
-                >
-                  <span className="shrink-0 transition-transform duration-150 group-hover:scale-110">
-                    {item.icon}
-                  </span>
-                  {/* Floating tooltip on hover */}
-                  <span className="absolute left-full ml-3 px-2.5 py-1 bg-popover text-popover-foreground text-xs font-medium rounded-md shadow-md border border-border opacity-0 pointer-events-none -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 z-50 whitespace-nowrap">
-                    {item.title}
-                  </span>
-                </Link>
-              );
-            }
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer",
-                  isActive
-                    ? "bg-primary text-primary-foreground shadow-xs font-semibold"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent",
-                )}
-              >
-                <span
-                  className={cn(
-                    "shrink-0 transition-transform duration-150 group-hover:scale-110",
-                    isActive
-                      ? "text-primary-foreground"
-                      : "text-muted-foreground group-hover:text-foreground",
-                  )}
-                >
-                  {item.icon}
-                </span>
-                <span className="truncate">{item.title}</span>
-              </Link>
-            );
-          })}
-        </nav>
+        <SidebarNav navItems={navItems} pathname={pathname} isCollapsed={isCollapsed} />
       </aside>
 
       {/* ========================================================================= */}
@@ -351,7 +352,7 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
             {/* Drawer Nav Items */}
             <nav className="flex-1 overflow-y-auto py-3 flex flex-col gap-1.5">
               {navItems.map((item) => {
-                const isActive = isItemActive(item.href);
+                const isActive = isItemActive(pathname, item.href);
                 return (
                   <Link
                     key={item.href}
@@ -488,25 +489,7 @@ export function DashboardShell({ children, navItems }: DashboardShellProps) {
             <ThemeToggle />
 
             {user?.role !== "SUPER_ADMIN" && (
-              <>
-                <Link
-                  href={getNotificationsHref(user?.role)}
-                  className="relative mr-1"
-                >
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="relative text-muted-foreground hover:text-foreground cursor-pointer"
-                    title="Notifications"
-                    aria-label="Notifications"
-                  >
-                    <Bell className="h-5 w-5" />
-                    {unreadCount > 0 && (
-                      <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive border-2 border-background" />
-                    )}
-                  </Button>
-                </Link>
-              </>
+              <NotificationBell href={getNotificationsHref(user?.role)} />
             )}
 
             {user && (
