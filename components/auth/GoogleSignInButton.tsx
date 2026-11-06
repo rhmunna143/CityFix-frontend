@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { useAuthActions } from "@/lib/auth/AuthContext";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { GsiButtonConfiguration } from "@/types/google";
@@ -21,7 +21,7 @@ export function GoogleSignInButton({
   onSuccess,
   onError,
 }: GoogleSignInButtonProps) {
-  const { googleLogin } = useAuth();
+  const { googleLogin } = useAuthActions();
   const buttonRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);

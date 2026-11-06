@@ -3,14 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { useAuthState } from "@/lib/auth/AuthContext";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import Image from "next/image";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, isLoading } = useAuthState();
   const pathname = usePathname();
 
   const getDashboardHref = () => {
@@ -71,7 +71,9 @@ export function Navbar() {
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-2.5">
           <ThemeToggle />
-          {user ? (
+          {isLoading ? (
+            <div className="h-9 w-56 animate-pulse rounded-lg bg-muted/40" aria-hidden />
+          ) : user ? (
             <Link
               href={getDashboardHref()}
               className={`${buttonVariants({ variant: "default" })} cursor-pointer gap-2 shadow-xs`}
@@ -187,7 +189,9 @@ export function Navbar() {
           </div>
 
           <div className="pt-4 border-t flex flex-col gap-2">
-            {user ? (
+            {isLoading ? (
+              <div className="h-10 w-full animate-pulse rounded-lg bg-muted/40" aria-hidden />
+            ) : user ? (
               <Link
                 href={getDashboardHref()}
                 onClick={() => setMobileMenuOpen(false)}
