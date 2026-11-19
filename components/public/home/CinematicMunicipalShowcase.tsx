@@ -155,8 +155,8 @@ export function CinematicMunicipalShowcase() {
         <div className="absolute top-1/4 left-10 w-[350px] h-[350px] bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none -z-10" />
         <div className="absolute bottom-1/4 right-10 w-[350px] h-[350px] bg-blue-500/10 blur-[120px] rounded-full pointer-events-none -z-10" />
 
-        <div className="max-w-7xl mx-auto space-y-12 relative z-10">
-          <div className="text-center max-w-7xl mx-auto space-y-4">
+        <div className="max-w-7xl mx-auto space-y-12 lg:space-y-16 relative z-10">
+          <div className="text-center max-w-3xl mx-auto space-y-4">
             <FadeIn direction="down" duration={0.4}>
               <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-xs">
                 <span className="relative flex h-2.5 w-2.5">
@@ -186,9 +186,9 @@ export function CinematicMunicipalShowcase() {
             </FadeIn>
           </div>
 
-          <div className="flex flex-col gap-4 justify-between items-center max-h-[90vh]">
-            <FadeIn delay={0.25} duration={0.6}>
-              <div className="relative mx-auto">
+          <div className="flex flex-col gap-6 items-center w-full">
+            <FadeIn delay={0.25} duration={0.6} className="w-full">
+              <div className="relative mx-auto w-full max-w-5xl">
                 <div className="absolute -inset-2 sm:-inset-4 bg-linear-to-r from-blue-600/30 via-primary/30 to-emerald-500/30 rounded-[2.5rem] blur-2xl opacity-60 dark:opacity-85 transition-all duration-700 pointer-events-none -z-10" />
 
                 <div
@@ -293,8 +293,8 @@ export function CinematicMunicipalShowcase() {
               </div>
             </FadeIn>
 
-            <FadeIn delay={0.3} duration={0.5}>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mx-auto">
+            <FadeIn delay={0.3} duration={0.5} className="w-full">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full max-w-5xl mx-auto">
                 {chapters.map((ch, idx) => {
                   const IconComp = ch.icon;
                   const isSelected = activeChapter === idx;
@@ -357,10 +357,9 @@ export function CinematicMunicipalShowcase() {
               </div>
             </FadeIn>
           </div>
-        </div>
 
-        <div className="stage-items mt-22">
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto pt-4">
+          <div className="w-full max-w-5xl mx-auto pt-4">
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StaggerItem>
               <HoverLiftCard className="h-full">
                 <div className="p-6 rounded-2xl border bg-card/80 backdrop-blur-xs space-y-3 shadow-xs h-full flex flex-col justify-between">
@@ -436,7 +435,8 @@ export function CinematicMunicipalShowcase() {
             </StaggerItem>
           </StaggerContainer>
         </div>
-      </section>
-    </LazyOnView>
+      </div>
+    </section>
+  </LazyOnView>
   );
 }
